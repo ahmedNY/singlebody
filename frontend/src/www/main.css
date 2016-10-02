@@ -1,0 +1,10 @@
+html {
+  font-family: 'Roboto', sans-serif;
+  direction: rtl;
+}
+
+body {
+  font-size: 13px;
+  line-height: 20px;
+  margin: 0px;
+}
