@@ -1,7 +1,8 @@
 import axios from "axios";
 import auth from "../stores/AuthStore"
 
-const HOSTNAME = "localhost";
+// const HOSTNAME = "localhost";
+const HOSTNAME = null;
 const PORT = "1337";
 const PREFIX = null; //"api"
 

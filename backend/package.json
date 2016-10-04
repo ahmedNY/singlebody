@@ -25,14 +25,15 @@
     "sails": "~0.12.4",
     "sails-disk": "~0.10.9",
     "sails-mysql": "^0.11.5",
-    "waterlock": "^0.1.2-rc1",
+    "waterlock": "git+https://github.com/ahmedNY/waterlock.git",
     "waterlock-facebook-auth": "^0.1.2-rc1",
     "waterlock-google-auth": "^0.1.2-rc1",
     "waterlock-local-auth": "^0.1.2-rc1"
   },
   "scripts": {
     "debug": "node debug app.js",
-    "start": "node app.js"
+    "start": "node app.js",
+    "flow": "flow; test $? -eq 0 -o $? -eq 2"
   },
   "main": "app.js",
   "repository": {
@@ -42,6 +43,7 @@
   "author": "ahmed",
   "license": "ISC",
   "devDependencies": {
+    "flow-bin": "^0.33.0",
     "sails-hook-autoreload": "^0.13.2"
   },
   "bugs": {

@@ -22,8 +22,8 @@ let router = () => (
     <Router history={hashHistory}>
       <Route path="/" component={Layout}>
         <IndexRoute component={CasesPage}/>
-        <Route path="cases/addcase" component={CaseEditorPage} onEnter={requireAuth} authorize={['superAdmin']} />
-        <Route path="cases/edit/:caseId" component={CaseEditorPage} onEnter={requireAuth} authorize={['superAdmin']} />
+        <Route path="cases/addcase" component={CaseEditorPage} onEnter={requireAuth} authorize={['admin']} />
+        <Route path="cases/edit/:caseId" component={CaseEditorPage} onEnter={requireAuth} authorize={['admin']} />
         <Route path="cases/donate/:caseId" component={DonatePage} onEnter={requireAuth} authorize={['registered']} />
         <Route path="cases/:caseId" component={CaseViewPage}/>
         <Route path="login" component={LoginPage}/>

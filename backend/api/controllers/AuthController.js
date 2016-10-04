@@ -16,12 +16,12 @@ module.exports = require('waterlock').waterlocked({
   permissions: function(req, res){
     var result = {};
     Jwt.findOne({token: req.headers.access_token}).populate("owner")
-      .then(jwt => {
+      .then(function(jwt) {
         result.jwt = jwt;
         return Auth.findOne({id: jwt.owner.auth}).populate("roles");
     }).then(function(auth){
       result.auth = auth;
-      var rolesIds = auth.roles.map(role => role.id);
+      var rolesIds = auth.roles.map(function(role){return role.id});
       return Permission.find({or:[{role: rolesIds}, {user: auth.id}]}).populate("model")
     }).then(function(perms){
       result.permissions = perms;

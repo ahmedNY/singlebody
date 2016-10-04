@@ -15,7 +15,6 @@ class AuthStore {
     type: "local"
   }
 
-
   @computed get isLogedIn() {
     return (this.user !== null) && (this.user !== undefined)
   }
@@ -25,31 +24,31 @@ class AuthStore {
   }
 
   login(username, password) {
-    return ApiHelper.post("connect/token", {
-      username: username,
+    return ApiHelper.post("auths/login", {
+      email: username,
       password: password,
-      grant_type: "password",
-      resource: "http://localhost:58292/",
-      scope: "offline_access profile email roles"
+      type: "local",
     }, "application/x-www-form-urlencoded")
     .then( response => {
-      this.auth = response.data.token_type + " " + response.data.access_token
-      this.authToken = response.data.access_token
-      cookie.save('auth', this.auth);
-      cookie.save('authToken', response.data.access_token);
+      console.log(response.data.token)
+      this.saveToken(response.data.token);
+      this.getCurrentUser();
       return response;
     });
   }
 
   loginWithFacebook = () => {
     console.log("login with facebook")
+    this.loginModel.visible = false;
     let auth = this
-    var win = window.open("http://localhost:1337/auths/login?type=facebook",'popUpWindow','centerscreen=true');
+    var win = window.open(ApiHelper.prepUrl("auths/login?type=facebook"),'popUpWindow','centerscreen=true');
     var intervalID = setInterval(function(){
       if (win.closed) {
         clearInterval(intervalID);
-        auth.getUserToken().then(() => {
-          auth.getCurrentUser();
+        return auth.getUserToken().then(() => {
+          return auth.getCurrentUser();
+        }).catch(()=>{
+          auth.loginModel.visible = true
         });
 
       }
@@ -58,11 +57,15 @@ class AuthStore {
   }
 
   logout() {
-    this.authToken = null;
-    this.user = null;
-    cookie.remove("authToken");
-    cookie.remove("user");
-    console.log("loged out...");
+    return ApiHelper.get("auths/logout", true)
+    .then( response => {
+      this.authToken = null;
+      this.user = null;
+      cookie.remove("authToken");
+      cookie.remove("user");
+      console.log("loged out...");
+      return response;
+    });
   }
 
   test() {
@@ -72,10 +75,14 @@ class AuthStore {
 
   getUserToken = () => {
     return ApiHelper.get("users/jwt", true).then(response => {
-      this.authToken = response.data.token;
-      cookie.save('authToken', this.authToken);
+      this.saveToken(response.data.token)
       return response;
     })
+  }
+
+  saveToken(token){
+    this.authToken = token;
+    cookie.save('authToken', this.authToken);
   }
 
   getCurrentUser = () => {

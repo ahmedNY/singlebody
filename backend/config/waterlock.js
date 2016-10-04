@@ -7,13 +7,16 @@
  *
  * http://waterlock.ninja/documentation
  */
+
+var BASE_URL = "http://localhost:1337";
+
 module.exports.waterlock = {
 
   // Base URL
   //
   // used by auth methods for callback URI's using oauth and for password
   // reset links.
-  baseUrl: 'http://localhost:1337',
+  baseUrl: BASE_URL,
 
   // Auth Method(s)
   //
@@ -37,7 +40,7 @@ module.exports.waterlock = {
           },
           from: 'no-reply@domain.com',
           subject: 'Your password reset!',
-          forwardUrl: 'http://localhost:1337'
+          forwardUrl: BASE_URL
         },
         template:{
           file: '../views/email.jade',
@@ -50,7 +53,7 @@ module.exports.waterlock = {
         name: "waterlock-facebook-auth",
         appId: "338408173162370",
         appSecret: "f2c817cdd65cf4db2a89a643b5b5e76a",
-        redirectUri: 'http://localhost:1337/auths/facebook_oauth2',
+        redirectUri: BASE_URL + '/auths/facebook_oauth2?type=facebook',
     }
   ],
 
@@ -109,7 +112,11 @@ module.exports.waterlock = {
       // obj - {controller: 'blog', action: 'post'}
       // string - 'custom json response string'
       // default - 'default'
-      success: '/auth/login-success',
+      // success: 'default',
+      success: {
+        local:'jwt',
+        facebook:'/auth/login-success',
+      },
 
       // This can be any one of the following
       //

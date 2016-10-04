@@ -20,8 +20,8 @@ module.exports = {
 
 	jwt: function(req, res){
 		Jwt.findOne({token: req.headers.access_token})
-			.then(jwt => {
-				Auth.findOne({user: jwt.owner}).then(auth => {
+			.then(function(jwt) {
+				Auth.findOne({user: jwt.owner}).then(function(auth) {
 					sails.log.verbose(auth);
 				})
 		})

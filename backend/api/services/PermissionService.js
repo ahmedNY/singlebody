@@ -279,7 +279,7 @@ module.exports = {
       return Promise.all([findRole, findUser, Model.findOne({
           name: permission.model
         })])
-        .then(([ role, user, model]) => {
+        .then(function(role, user, model) {
           permission.model = model.id;
           if (role && role.id) {
             permission.role = role.id;
@@ -378,7 +378,7 @@ module.exports = {
       name: options.model
     })]);
 
-    ok = ok.then(([ role, user, model ]) => {
+    ok = ok.then(function(role, user, model) {
 
       var query = {
         model: model.id,
