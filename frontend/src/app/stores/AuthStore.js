@@ -1,4 +1,4 @@
-import { observable, computed } from "mobx";
+import { observable, computed, toJS } from "mobx";
 import ApiHelper from "../helpers/ApiHelper";
 import react from 'react';
 import cookie from 'react-cookie';
@@ -88,7 +88,7 @@ class AuthStore {
   getCurrentUser = () => {
     return ApiHelper.get("auths/permissions", true).then(response => {
       this.user = response.data
-      cookie.save('user', this.user);
+      cookie.save('user', response.data);
       return this.user;
     })
   }
@@ -97,4 +97,5 @@ class AuthStore {
 var store = window.store = new AuthStore;
 window.cookie = cookie
 window.jwtDecode = jwtDecode
+window.toJS = toJS
 export default store;

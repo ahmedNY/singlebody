@@ -10,7 +10,7 @@ class AuthorizedPage extends AuthorizedComponent {
     super(props);
     this.userRoles = ["public"]; // not registed user
     if(auth.user)
-      this.userRoles = auth.user.auth.roles.map(function(role){return role.name})
+      this.userRoles = auth.user.roles;
     this.notAuthorizedPath = '/restricted';
   }
 

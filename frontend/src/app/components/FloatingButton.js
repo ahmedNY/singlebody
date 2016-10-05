@@ -23,7 +23,7 @@ export default class FloatingButton extends RoleAwareComponent {
 
     // Authenticatoin
     this.allowedRoles = ['admin'];
-    this.userRoles = auth.user.auth.roles.map(function(role){return role.name});
+    this.userRoles = auth.user.roles;
   }
 
   render() {
