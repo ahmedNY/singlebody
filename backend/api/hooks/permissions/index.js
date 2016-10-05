@@ -126,6 +126,10 @@ function initializeFixtures() {
     .then(admin => {
       return require(path.resolve(fixturesPath, 'permission')).create(roles, models, admin, sails.config.permissions);
     })
+    .then(function(){
+      sails.log.debug(" Adding sample cases")
+      return require(path.resolve(fixturesPath, 'case')).create()
+    })
     .catch(error => {
       sails.log.error(error)
     })
