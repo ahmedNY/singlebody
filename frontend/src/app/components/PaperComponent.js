@@ -10,12 +10,26 @@ const paperStyle = {
   // maxWidth: "900px"
 }
 
+const sizes = {
+  medium: {
+    xs: 11,
+    sm: 10,
+    md: 8
+  },
+  small: {
+    xs: 10,
+    sm: 7,
+    md: 5
+  }
+}
+
 export default class PaperComponent extends Component {
   render(){
+    const {size = "medium"} = this.props;
     return(
       <Grid>
         <Row around="xs">
-          <Col xs={12} sm={10} md={8}>
+          <Col xs={sizes[size].xs} sm={sizes[size].sm} md={sizes[size].md}>
               <Paper style={paperStyle} zDepth={4}>
               {this.props.children}
               </Paper>

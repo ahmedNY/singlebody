@@ -1,6 +1,7 @@
 import  React from 'react';
 import {Card, CardActions, CardTitle, CardText} from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
+import RaisedButton from 'material-ui/RaisedButton';
 import PaperComponent from '../components/PaperComponent'
 
 import {List, ListItem} from 'material-ui/List';
@@ -11,6 +12,7 @@ import Divider from 'material-ui/Divider';
 import { observer } from "mobx-react";
 import { IntlProvider, FormattedRelative, addLocaleData } from "react-intl";
 import ar from 'react-intl/locale-data/ar';
+import { Row, Col } from 'react-flexbox-grid';
 
 
 import store from '../stores/DonationsStore'
@@ -78,13 +80,26 @@ export default class DonationsPage extends React.Component {
       );
     });
 
-    var postDate    = Date.now() - (1000 * 60 * 60 * 24);
-
     return(
       <PaperComponent>
-        <h1>تبرعاتك</h1>
-        {donationsList}
+        {donationsList.length > 0 ?
+          <div>
+            <h1>تبرعاتك</h1>
+            {donationsList}
+          </div>
+          :
+          <Row center="xs">
+            <Col>
+              <h1>عذراً انت لم تقم بالتبرع بعد 🤔</h1>
+              <RaisedButton
+              href="#/"
+              label="عرض حالات تحتاج العون"
+              primary={true}/>
+            </Col>
+          </Row>
+        }
       </PaperComponent>
+
     );
   }
 }

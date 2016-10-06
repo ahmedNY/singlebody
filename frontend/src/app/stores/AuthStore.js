@@ -3,6 +3,7 @@ import ApiHelper from "../helpers/ApiHelper";
 import react from 'react';
 import cookie from 'react-cookie';
 import jwtDecode from 'jwt-decode';
+import Promise from 'bluebird';
 
 class AuthStore {
 
@@ -38,22 +39,24 @@ class AuthStore {
   }
 
   loginWithFacebook = () => {
-    console.log("login with facebook")
-    this.loginModel.visible = false;
-    let auth = this
-    var win = window.open(ApiHelper.prepUrl("auths/login?type=facebook"),'popUpWindow','centerscreen=true');
-    var intervalID = setInterval(function(){
-      if (win.closed) {
-        clearInterval(intervalID);
-        return auth.getUserToken().then(() => {
-          return auth.getCurrentUser();
-        }).catch(()=>{
-          auth.loginModel.visible = true
-        });
+    return new Promise((resolve, reject) => {
+      console.log("login with facebook")
+      this.loginModel.visible = false;
+      let auth = this
+      var win = window.open(ApiHelper.prepUrl("auths/login?type=facebook"),'popUpWindow','centerscreen=true');
+      var intervalID = setInterval(function(){
+        if (win.closed) {
+          clearInterval(intervalID);
+          auth.getUserToken().then(() => {
+            resolve(auth.getCurrentUser());
+          }).catch((error)=>{
+            auth.loginModel.visible = true
+            reject(error)
+          });
 
-      }
-    }, 100);
-
+        }
+      }, 100);
+    })
   }
 
   logout() {

@@ -9,8 +9,9 @@ import FlatButton from 'material-ui/FlatButton';
 import MenuItem from 'material-ui/MenuItem';
 import { FormsyCheckbox, FormsyDate, FormsyRadio, FormsyRadioGroup,
     FormsySelect, FormsyText, FormsyTime, FormsyToggle } from 'formsy-material-ui/lib';
+import { Row } from 'react-flexbox-grid';
+import PaperComponent from '../components/PaperComponent';
 
-import { Grid, Row, Col} from 'react-flexbox-grid';
 
 import store from '../stores/CasesStore.js'
 import auth from "../stores/AuthStore";
@@ -42,7 +43,7 @@ const styles = {
 
 @observer
 class LoginPage extends Component {
-   
+
    constructor(props) {
       super(props);
       this.state = {
@@ -63,17 +64,18 @@ class LoginPage extends Component {
     console.error('Form error:', data);
   }
 
-
+  loginWithFacebook = () =>{
+    auth.loginWithFacebook().then(() => {
+      this.props.router.replace(this.props.location.state.nextPathname)
+    });
+  }
 
   render() {
     const {paperStyle, switchStyle, submitStyle } = styles;
     const { wordsError, numericError, urlError } =    errorMessages;
 
     return (
-        <Grid>
-          <Row center="xs">
-            <Col xs={12} sm={4}>
-              <Paper style={styles.paperStyle} zDepth={4}>
+              <PaperComponent size="small">
                   <LoginForm loginModel={auth.loginModel} />
                   <br/>
                   <Row end="xs">
@@ -82,11 +84,13 @@ class LoginPage extends Component {
                       primary={true}
                       onTouchTap={this.login}
                     />
+                    <FlatButton
+                      label="تسجيل الدخول بالفيسبوك"
+                      primary={true}
+                      onTouchTap={this.loginWithFacebook}
+                    />,
                   </Row>
-              </Paper>
-            </Col>
-          </Row>
-        </Grid>
+              </PaperComponent>
     );
   }
 };
