@@ -37,21 +37,22 @@ export default class DonationsPage extends React.Component {
 
    fetchCases () {
      console.log("Fetching donations ........")
-     store.getCases();
+     store.getDonations();
    }
 
    renderList (donations) {
      let list = [];
      for(var i = 0; i < donations.length; i++){
        let d = donations[i];
-       let item = <ListItem key={"li"+i} primaryText={(d.isPromise ? "لقد وعدت بدفع " : "لقد تبرعت بـ ") + d.amount + " جنيه عن طريق  " +  pTypes[d.paymentType]}
+       let item = <ListItem href={"#/donations/edit/" + d.id} key={"li"+i} primaryText={(d.isPromise ? "لقد وعدت بدفع " : "لقد تبرعت بـ ") + d.amount + " جنيه عن طريق  " +  pTypes[d.paymentType]}
                             secondaryText={
-                                  <IntlProvider locale="ar">
-                                  <div>
-                                  <br/>
-                                  <FormattedRelative value={d.updatedAt} />
-                                  </div>
-                                  </IntlProvider>}
+                                <div>
+                                    <IntlProvider locale="ar">
+                                        <FormattedRelative value={d.updatedAt} />
+                                    </IntlProvider>
+                                    <br/>
+                                </div>
+                                }
                             leftIcon={d.isPromise ? <ActionSchedule/> : <ActionCheck />} />
        list.push(item);
        list.push(<Divider key={"div"+i}/>);

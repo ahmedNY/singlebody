@@ -21,10 +21,14 @@ module.exports = {
 			})
 
 		});
-},
-	// findOne: function(req, res){
-	// 	return res.ok("Not yet implemented!")
-	// },
+	},
+
+	findOne: function(req, res) {
+		Donation.findOne({id: req.params.id}).then(function(_dontaion) {
+			return res.ok(_dontaion);
+		});
+	},
+
 	create: function(req, res){
     if(!req.body.case) {
       return res.badRequest("valid case is required on request body")
@@ -45,9 +49,15 @@ module.exports = {
       sails.log.error(error)
     })
 	},
-	// update: function(req, res){
-	// 	return res.ok("Not yet implemented!")
-	// },
+
+	update: function(req, res){
+		if(req.body.case) {
+      return res.badRequest("currently you cannot update donation case")
+    }
+		Donation.update({id: req.params.id}, req.body).then(function(_donation){
+			return res.ok(_donation[0]);
+		})
+	},
 	// destroy: function(req, res){
 	// 	return res.ok("Not yet implemented!")
 	// },

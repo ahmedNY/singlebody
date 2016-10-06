@@ -9,8 +9,9 @@ import CasesPage from './pages/CasesPage.js';
 import CaseViewPage from './pages/CaseViewPage.js';
 import CaseEditorPage from './pages/CaseEditorPage.js';
 
-import DonationsPage from './pages/DonationsPage.js';
-import DonatePage from './pages/DonatePage.js';
+import DonationsListPage from './pages/DonationsListPage.js';
+import DonationsAddPage from './pages/DonationsAddPage.js';
+import DonationsEditPage from './pages/DonationsEditPage.js';
 
 import auth from './stores/AuthStore';
 
@@ -33,8 +34,9 @@ let router = () => (
         <Route path="cases/:caseId" component={CaseViewPage}/>
         {/* Donations */}
         <Route path="donations" onEnter={requireAuth} authorize={['registered']}>
-          <IndexRoute component={DonationsPage}/>
-          <Route path="add/:caseId" component={DonatePage} />
+          <IndexRoute component={DonationsListPage}/>
+          <Route path="add/:caseId" component={DonationsAddPage} />
+          <Route path="edit/:donationId" component={DonationsEditPage} />
         </Route>
 
         {/* Authentication */}

@@ -1,29 +1,32 @@
+// Core components
 import React, { Component } from 'react';
 import { withRouter } from 'react-router';
-import { FormsyCheckbox, FormsyDate, FormsyRadio, FormsyRadioGroup,
-    FormsySelect, FormsyText, FormsyTime, FormsyToggle } from 'formsy-material-ui/lib';
-import RaisedButton from 'material-ui/RaisedButton';
-import FlatButton from 'material-ui/FlatButton';
-import Paper from 'material-ui/Paper';
-import { Grid, Row, Col} from 'react-flexbox-grid';
-import IconButton from 'material-ui/IconButton';
+
+// UI components
+import { FormsyRadio, FormsyRadioGroup, FormsyText } from 'formsy-material-ui/lib';
+import { Row, Col } from 'react-flexbox-grid';
+import { green500 } from 'material-ui/styles/colors';
+import {Toolbar, ToolbarGroup, ToolbarTitle} from 'material-ui/Toolbar';
 import ActionDone from 'material-ui/svg-icons/action/done';
-import {blue500, red500, greenA200} from 'material-ui/styles/colors';
+import ActionCancel from 'material-ui/svg-icons/navigation/cancel';
+import IconButton from 'material-ui/IconButton';
+import RaisedButton from 'material-ui/RaisedButton';
+import NavBack from 'material-ui/svg-icons/image/navigate-next';
 
 import { Sticky } from 'react-sticky';
 
+// My components
+import PaperComponent from '../components/PaperComponent';
+
+// Stores
 import store from '../stores/DonationsStore'
 import uiStore from '../stores/UiStore'
 
-import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
 
 const styles = {
     paperStyle: {
-      // width: "80%",
-      // margin: 'auto',
       padding: 20,
       marginTop: 20,
-      // maxWidth: "900px"
     },
     switchStyle: {
       marginBottom: 16,
@@ -34,42 +37,16 @@ const styles = {
     form: {
       width: "100%"
     },
-    stepper : {
-      maxWidth: 380,
-      maxHeight: 400,
-      margin: 'auto'
-    }
+    smallIcon: {
+      width: 30,
+      height: 30,
+    },
+    smallButton: {
+      width: 60,
+      height: 60,
+      padding: 16,
+    },
 }
-
-const ibStyles = {
-  smallIcon: {
-    width: 30,
-    height: 30,
-  },
-  mediumIcon: {
-    width: 48,
-    height: 48,
-  },
-  largeIcon: {
-    width: 60,
-    height: 60,
-  },
-  small: {
-    width: 60,
-    height: 60,
-    padding: 16,
-  },
-  medium: {
-    width: 96,
-    height: 96,
-    padding: 24,
-  },
-  large: {
-    width: 120,
-    height: 120,
-    padding: 30,
-  },
-};
 
 // payment types
 const pTypes = {
@@ -78,7 +55,7 @@ const pTypes = {
   phoneCreditTransfer: "تحويل الرصيد"
 }
 
-class DonatePage extends Component {
+class DonationsAddPage extends Component {
 
   constructor(props) {
     super(props);
@@ -114,14 +91,13 @@ class DonatePage extends Component {
   }
 
   submitForm = (data) => {
-    // console.log(data)
     if(data.amount === "-1"){
       data.amount = data.otherAmount;
     }
+
     delete data.otherAmount;
-    data.case = this.props.params.caseId
-    data.isPromise = data.paymentType !== "ePayment"
-    console.log(data)
+    data.case = this.props.params.caseId;
+    data.isPromise = data.paymentType !== "ePayment";
 
     store.addDonation(data).then( () => {
       // Go to donations page
@@ -129,12 +105,14 @@ class DonatePage extends Component {
     })
   }
 
+  goBack = () => {
+    this.props.router.goBack();
+  }
+
   formChange = (values) => {
-    // console.log(values);
+    console.log(values);
     // Emable/Disable custom amount
-    if(values.amount < 0){ //-1
-      this.setState({ otherValueDisable: (values.amount === "1-") })
-    }
+    this.setState({ otherValueDisable: (values.amount > "0") })
     if(values.paymentType){
       this.setState({paymentType: values.paymentType})
     }
@@ -152,31 +130,34 @@ class DonatePage extends Component {
       onChange={this.formChange}
       style={styles.form}
       >
-        <Grid>
-        {this.state.canSubmit ?
           <Sticky style={{zIndex:20}}>
           <Toolbar>
-          <ToolbarGroup firstChild={true}>
-            <IconButton
-            type="submit"
-            iconStyle={ibStyles.smallIcon}
-            style={ibStyles.small}>
-              <ActionDone color={blue500} />
-            </IconButton>
-          <ToolbarTitle text="حفظ"/>
-          </ToolbarGroup>
+            <ToolbarGroup firstChild={true}>
+              <IconButton
+                onClick={this.goBack}
+                iconStyle={styles.smallIcon}
+                style={styles.small}>
+                  <NavBack />
+              </IconButton>
+              <ToolbarTitle text="اجراء تبرع"/>
+            </ToolbarGroup>
+
+            <ToolbarGroup lastChild={true}>
+              <IconButton
+                type="submit"
+                iconStyle={styles.smallIcon}
+                disabled={!this.state.canSubmit}
+                style={styles.small}>
+                  <ActionDone color={green500} />
+              </IconButton>
+            </ToolbarGroup>
           </Toolbar>
           </Sticky>
-          : null
-        }
-          <Row center="xs">
-            <Col xs={12} sm={6} md={5}>
-              <Paper style={styles.paperStyle} zDepth={4}>
-                <Row start="xs">
+              <PaperComponent style={styles.paperStyle} zDepth={4}>
                     <div>
                       <h3> عايز تتبرع بيه كم؟</h3>
                       <Row bottom="xs">
-                        <Col sm={5} xs={12}>
+                        <Col sm={3} xs={12}>
                           <FormsyRadioGroup name="amount" required>
                             <FormsyRadio
                               value="20"
@@ -211,7 +192,8 @@ class DonatePage extends Component {
                             />
                         </Col>
                       </Row>
-
+                      <br/>
+                      <br/>
                       <h3 > كيف حتدفع؟ </h3>
 
                       <FormsyRadioGroup name="paymentType" required>
@@ -236,39 +218,11 @@ class DonatePage extends Component {
                       { this.state.paymentType === "ePayment" ?
                         <Col>
 
-                        <FormsyText
-                          name="ePayment_cardNo"
-                          hintText="رقم من 14 خانة"
-                          floatingLabelText="رقم الكرت"
+                        <RaisedButton
+                          label="ادفع الان"
+                          style={styles.submit}
                           fullWidth={true}
-                          />
-
-                        <Row>
-                        <Col>
-                            <FormsyText
-                            name="ePayment_expMonth"
-                            hintText="الشهر"
-                            floatingLabelText="  صلاحية الكرت - الشهر"
-                            fullWidth={true}
-                            />
-                        </Col>
-
-                          <Col>
-                            <FormsyText
-                            name="ePayment_expYear"
-                            hintText="السنة"
-                            floatingLabelText=" صلاحية الكرت - السنة"
-                            fullWidth={true}
-                            />
-                        </Col>
-                      </Row>
-
-
-                        <FormsyText
-                          name="ePayment_pin"
-                          floatingLabelText="الرقم السري"
-                          fullWidth={true}
-                          type="password"
+                          primary={true}
                           />
 
                       </Col>
@@ -293,22 +247,10 @@ class DonatePage extends Component {
                         <br/>
                         </h4>
                       : null}
-                        {/* <RaisedButton
-                          type="submit"
-                          label="اوعدكم باني سوف ادفع"
-                          disabled={!this.state.canSubmit}
-                          style={styles.submit}
-                          fullWidth={true}
-                          primary={true}
-                          /> */}
 
-                        {/* <h3>كتر خيركم و بارك الله فيكم</h3> */}
+                        <h4 style={{textAlign: "center"}}>كتر خيركم و بارك الله فيكم</h4>
                       </div>
-                  </Row>
-                </Paper>
-              </Col>
-            </Row>
-          </Grid>
+                </PaperComponent>
           </Formsy.Form>
         </div>
       );
@@ -317,11 +259,11 @@ class DonatePage extends Component {
 
 
   // PropTypes
-  DonatePage.propTypes = {
+  DonationsAddPage.propTypes = {
     router: React.PropTypes.shape({
       push: React.PropTypes.func.isRequired
     }).isRequired
   };
 
-  var decoratedComponent = withRouter(DonatePage);
+  var decoratedComponent = withRouter(DonationsAddPage);
   export default decoratedComponent
