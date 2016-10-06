@@ -11,6 +11,7 @@ import uiStore from "../../stores/UiStore";
 import { observer } from "mobx-react";
 import { Sticky } from 'react-sticky';
 
+
 const titleStyle = {
   textDecoration: "none",
   color: "white"
@@ -31,32 +32,38 @@ class Header extends Component {
     auth.test()
   }
 
-
+  toggleSideMenu = () => {
+    uiStore.sideMenuVisible = true;
+    console.log('Opnening sidne mdoe')
+  }
 
   render() {
     console.log(auth.userInfo);
     const isLogedIn = auth.isLogedIn;
     const jsx = (
-      <Sticky  style={{zIndex:20}}>
-        <AppBar
-        title={ <a href="#/" style={titleStyle}>كالجسد الواحد</a> }
-        iconElementRight={
-          <IconMenu
-          iconButtonElement={
-            <IconButton><MoreVertIcon /></IconButton>
+      <div>
+        <Sticky  style={{zIndex:20}}>
+          <AppBar
+          onLeftIconButtonTouchTap={this.toggleSideMenu}
+          title={ <a href="#/" style={titleStyle}>كالجسد الواحد</a> }
+          iconElementRight={
+            <IconMenu
+            iconButtonElement={
+              <IconButton><MoreVertIcon /></IconButton>
+            }
+            targetOrigin={{horizontal: 'right', vertical: 'top'}}
+            anchorOrigin={{horizontal: 'right', vertical: 'top'}}
+            >
+            <MenuItem primaryText="انعاش" />
+            <MenuItem primaryText="مساعده" />
+            <MenuItem onClick={this.testAuth.bind(this)}primaryText="test" />
+            {!isLogedIn ? <MenuItem onClick={this.handleLogin.bind(this)} primaryText="تسجيل الدخول" /> : null}
+            { isLogedIn ? <MenuItem onClick={this.handleLogout.bind(this)} primaryText="تسجيل خروج" /> : null}
+            </IconMenu>
           }
-          targetOrigin={{horizontal: 'right', vertical: 'top'}}
-          anchorOrigin={{horizontal: 'right', vertical: 'top'}}
-          >
-          <MenuItem primaryText="انعاش" />
-          <MenuItem primaryText="مساعده" />
-          <MenuItem onClick={this.testAuth.bind(this)}primaryText="test" />
-          {!isLogedIn ? <MenuItem onClick={this.handleLogin.bind(this)} primaryText="تسجيل الدخول" /> : null}
-          { isLogedIn ? <MenuItem onClick={this.handleLogout.bind(this)} primaryText="تسجيل خروج" /> : null}
-          </IconMenu>
-        }
-        />
-      </Sticky>
+          />
+        </Sticky>
+      </div>
     )
 
     return uiStore.mainHeaderVisible ? jsx : null;

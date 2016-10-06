@@ -8,6 +8,8 @@ import LoginForm from "./LoginForm";
 const customContentStyle = {
   width: '100%',
   maxWidth: 400,
+  height: 300,
+  minHeight: 300,
 };
 
 /**
@@ -56,6 +58,8 @@ export default class LoginDialog extends React.Component {
           open={auth.loginModel.visible && !auth.isLogedIn}
           modal={false}
           onRequestClose={this.handleClose}
+          autoDetectWindowHeight={false}
+          // autoScrollBodyContent={true}
         >
           <LoginForm loginModel={auth.loginModel}/>
         </Dialog>

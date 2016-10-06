@@ -12,6 +12,7 @@ import Header from "./components/layout/header.js"
 import LoginDialog from "./components/LoginDialog"
 
 import { StickyContainer } from 'react-sticky';
+import SideMenu from "./components/layout/SideMenu";
 
 const muiTheme = getMuiTheme({
   palette: {
@@ -25,11 +26,14 @@ class Main extends Component {
   render() {
     return (
       <MuiThemeProvider muiTheme={muiTheme}>
-        <StickyContainer>
-           <Header/>
-           {this.props.children}
-           <LoginDialog/>
-       </StickyContainer>
+        <div>
+          <SideMenu/>
+          <StickyContainer>
+            <Header/>
+            {this.props.children}
+            <LoginDialog/>
+          </StickyContainer>
+        </div>
       </MuiThemeProvider>
     );
   }
