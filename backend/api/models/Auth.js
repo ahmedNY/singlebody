@@ -23,12 +23,17 @@ module.exports = {
     permissions: {
       collection: "Permission",
       via: "user"
+    },
+    
+    donations: {
+      collection: "Donation",
+      via: "owner"
     }
   }),
 
   beforeCreate: require('waterlock').models.auth.beforeCreate,
   beforeUpdate: require('waterlock').models.auth.beforeUpdate,
-  
+
   beforeCreate: function (user, next) {
     if (_.isEmpty(user.username)) {
       user.username = user.email;

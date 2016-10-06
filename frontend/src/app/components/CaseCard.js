@@ -28,10 +28,10 @@ const imageStyle = {
 
 export default class CaseCard extends Component {
   render() {
-    
-    const { id, title, summary, city, section, 
+
+    const { id, title, summary, city, section,
       moneyRaised, moneyRequired, daysRemaining, groupName , image} = this.props.caseModel
-  
+
   const moneyRaisedPer = Math.round( (moneyRaised / moneyRequired) * 100 )
 
     return(
@@ -48,7 +48,9 @@ export default class CaseCard extends Component {
             {summary}
           </CardText>
           <CardText>
-            <LocationIcon/> {city + ", " + section}
+            <div style={{marginBottom:7}}>
+              <LocationIcon style={{marginBottom: -7}}/> {city + ", " + section}
+            </div>
             <LinearProgress mode="determinate" value={moneyRaisedPer} />
             <br/>
             <Row>

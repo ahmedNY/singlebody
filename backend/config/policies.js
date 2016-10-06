@@ -73,6 +73,14 @@ module.exports.policies = {
     destroy: allPloicies,
   },
 
+  DonationController: {
+    find: allPloicies,
+    findOne: allPloicies,
+    update: allPloicies,
+    create: allPloicies,
+    destroy: allPloicies,
+  },
+
   AuthController: {
     permissions: "hasJsonWebToken",
   },

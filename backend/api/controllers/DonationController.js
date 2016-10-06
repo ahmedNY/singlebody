@@ -6,17 +6,45 @@
  */
 
 module.exports = {
-	// find: function(req, res){
-	// 	Donation.find().then(function(donations){
-	// 		return res.ok(donations)
-	// 	})
-	// },
+	find: function(req, res){
+		Jwt.findOne({token: req.headers.access_token}).populate("owner")
+      .then(function(jwt) {
+        // result.jwt = jwt;
+        return Auth.findOne({id: jwt.owner.auth}).populate("donations");
+    }).then(function(auth){
+			donationCases = auth.donations.map(function(d){
+				return d.case
+			})
+			Case.find({id:donationCases}).populate("donations", {owner: auth.id})
+			.then(function(_cases){
+				return res.ok(_cases)
+			})
+
+		});
+},
 	// findOne: function(req, res){
 	// 	return res.ok("Not yet implemented!")
 	// },
-	// create: function(req, res){
-	// 	return res.ok("Not yet implemented!")
-	// },
+	create: function(req, res){
+    if(!req.body.case) {
+      return res.badRequest("valid case is required on request body")
+    }
+    Case.findOne(req.body.case).populate('donations')
+    .then(function(_case){
+      sails.log.error(JSON.stringify(_case));
+      if(!_case) {
+        return res.notFound("No case with id of " + req.body.case)
+      }
+      Donation.create(req.body).then(function(_donation){
+        _case.donations.add(_donation.id)
+        _case.save().then(function(){
+          return res.ok(_donation)
+        });
+      })
+    }).catch(function(error){
+      sails.log.error(error)
+    })
+	},
 	// update: function(req, res){
 	// 	return res.ok("Not yet implemented!")
 	// },

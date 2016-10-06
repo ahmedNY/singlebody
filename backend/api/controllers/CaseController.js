@@ -3,15 +3,13 @@ module.exports = require('waterlock').waterlocked({
   pluralize: true,
 
   find: function(req, res) {
-    sails.log.verbose("------->:" + JSON.stringify(req.params.all().where))
-    Case.find().then(function(cases) {
+    Case.find().populate('donations').then(function(cases) {
 			return res.ok(cases);
 		});
 	},
 
 	findOne: function(req, res) {
-    sails.log.verbose(req.params)
-		Case.findOne({id: req.params.id}).then(function(_case) {
+		Case.findOne({id: req.params.id}).populate('donations').then(function(_case) {
 			return res.ok(_case);
 		});
 	},

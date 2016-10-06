@@ -8,8 +8,14 @@
 module.exports = {
 
   attributes: {
-    case: "integer",
     amount: "integer",
-    paymentType: "integer",
+    paymentType: "string",
+    isPromise: "boolean",
+    case: {
+      model: 'Case'
+    },
+    owner: {
+      model: "Auth"
+    },
   }
 };

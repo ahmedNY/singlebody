@@ -22,5 +22,8 @@ module.exports = {
     image: 'string',
     owner: "integer",
     createdBy: "integer",
+    donations: {
+      collection: "Donation"
+    }
   }
 };

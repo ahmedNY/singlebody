@@ -25,7 +25,7 @@ export default class CasePage extends Component {
         });
 
         return(
-            <Grid>
+            <div style={{marginRight: 20, marginLeft: 20}}>
                 <Row >
                     {cases}
                 </Row>
@@ -35,7 +35,7 @@ export default class CasePage extends Component {
                     </FloatingButton>
                  : null
                 }
-            </Grid>
+            </div>
         );
     }
 }

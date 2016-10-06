@@ -193,7 +193,7 @@ class CaseViewPage extends Component {
                       </Col>
                     </Row>
                     <br/>
-                     <RaisedButton href={ "#/cases/donate/" + id } label="تبرع" primary={true} style={btnStyle} fullWidth={true} labelStyle={labelStyle}/>
+                     <RaisedButton href={ "#/donations/add/" + id } label="تبرع الآن" primary={true} style={btnStyle} fullWidth={true} labelStyle={labelStyle}/>
                     <br/>
                   </div>
                 </Col>

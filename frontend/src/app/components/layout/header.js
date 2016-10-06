@@ -7,7 +7,9 @@ import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import NavigationClose from 'material-ui/svg-icons/navigation/close';
 import {withRouter}  from 'react-router';
 import auth from "../../stores/AuthStore";
+import uiStore from "../../stores/UiStore";
 import { observer } from "mobx-react";
+import { Sticky } from 'react-sticky';
 
 const titleStyle = {
   textDecoration: "none",
@@ -34,26 +36,30 @@ class Header extends Component {
   render() {
     console.log(auth.userInfo);
     const isLogedIn = auth.isLogedIn;
-    return (
-      <AppBar
+    const jsx = (
+      <Sticky  style={{zIndex:20}}>
+        <AppBar
         title={ <a href="#/" style={titleStyle}>كالجسد الواحد</a> }
         iconElementRight={
           <IconMenu
-            iconButtonElement={
-              <IconButton><MoreVertIcon /></IconButton>
-            }
-            targetOrigin={{horizontal: 'right', vertical: 'top'}}
-            anchorOrigin={{horizontal: 'right', vertical: 'top'}}
+          iconButtonElement={
+            <IconButton><MoreVertIcon /></IconButton>
+          }
+          targetOrigin={{horizontal: 'right', vertical: 'top'}}
+          anchorOrigin={{horizontal: 'right', vertical: 'top'}}
           >
-            <MenuItem primaryText="انعاش" />
-            <MenuItem primaryText="مساعده" />
-            <MenuItem onClick={this.testAuth.bind(this)}primaryText="test" />
-            {!isLogedIn ? <MenuItem onClick={this.handleLogin.bind(this)} primaryText="تسجيل الدخول" /> : null}
-            { isLogedIn ? <MenuItem onClick={this.handleLogout.bind(this)} primaryText="تسجيل خروج" /> : null}
+          <MenuItem primaryText="انعاش" />
+          <MenuItem primaryText="مساعده" />
+          <MenuItem onClick={this.testAuth.bind(this)}primaryText="test" />
+          {!isLogedIn ? <MenuItem onClick={this.handleLogin.bind(this)} primaryText="تسجيل الدخول" /> : null}
+          { isLogedIn ? <MenuItem onClick={this.handleLogout.bind(this)} primaryText="تسجيل خروج" /> : null}
           </IconMenu>
         }
-      />
-      );
+        />
+      </Sticky>
+    )
+
+    return uiStore.mainHeaderVisible ? jsx : null;
   }
 }
 

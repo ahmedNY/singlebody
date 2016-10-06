@@ -1,11 +1,21 @@
 import React, { Component } from 'react';
-import store from '../stores/CasesStore.js'
+import { withRouter } from 'react-router';
 import { FormsyCheckbox, FormsyDate, FormsyRadio, FormsyRadioGroup,
     FormsySelect, FormsyText, FormsyTime, FormsyToggle } from 'formsy-material-ui/lib';
 import RaisedButton from 'material-ui/RaisedButton';
-import { Grid, Row, Col} from 'react-flexbox-grid';
-import Paper from 'material-ui/Paper';
 import FlatButton from 'material-ui/FlatButton';
+import Paper from 'material-ui/Paper';
+import { Grid, Row, Col} from 'react-flexbox-grid';
+import IconButton from 'material-ui/IconButton';
+import ActionDone from 'material-ui/svg-icons/action/done';
+import {blue500, red500, greenA200} from 'material-ui/styles/colors';
+
+import { Sticky } from 'react-sticky';
+
+import store from '../stores/DonationsStore'
+import uiStore from '../stores/UiStore'
+
+import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
 
 const styles = {
     paperStyle: {
@@ -31,6 +41,36 @@ const styles = {
     }
 }
 
+const ibStyles = {
+  smallIcon: {
+    width: 30,
+    height: 30,
+  },
+  mediumIcon: {
+    width: 48,
+    height: 48,
+  },
+  largeIcon: {
+    width: 60,
+    height: 60,
+  },
+  small: {
+    width: 60,
+    height: 60,
+    padding: 16,
+  },
+  medium: {
+    width: 96,
+    height: 96,
+    padding: 24,
+  },
+  large: {
+    width: 120,
+    height: 120,
+    padding: 30,
+  },
+};
+
 // payment types
 const pTypes = {
   collector: "تسليم لاقرب متحصل",
@@ -38,7 +78,7 @@ const pTypes = {
   phoneCreditTransfer: "تحويل الرصيد"
 }
 
-export default class DonatePage extends Component {
+class DonatePage extends Component {
 
   constructor(props) {
     super(props);
@@ -47,6 +87,14 @@ export default class DonatePage extends Component {
       otherValueDisable: true,
       paymentType: null
     }
+  }
+
+  componentWillMount() {
+    uiStore.mainHeaderVisible = false;
+  }
+
+  componentWillUnmount() {
+    uiStore.mainHeaderVisible = true;
   }
 
   enableButton = () => {
@@ -71,8 +119,14 @@ export default class DonatePage extends Component {
       data.amount = data.otherAmount;
     }
     delete data.otherAmount;
-    data.caseId = this.props.params.caseId
+    data.case = this.props.params.caseId
+    data.isPromise = data.paymentType !== "ePayment"
     console.log(data)
+
+    store.addDonation(data).then( () => {
+      // Go to donations page
+      this.props.router.push("donations")
+    })
   }
 
   formChange = (values) => {
@@ -88,28 +142,42 @@ export default class DonatePage extends Component {
 
   render() {
 
-    const {finished, stepIndex} = this.state;
-
     return (
       <div>
+      <Formsy.Form
+      onValid={this.enableButton}
+      onInvalid={this.disableButton}
+      onValidSubmit={this.submitForm}
+      onInvalidSubmit={this.notifyFormError}
+      onChange={this.formChange}
+      style={styles.form}
+      >
         <Grid>
+        {this.state.canSubmit ?
+          <Sticky style={{zIndex:20}}>
+          <Toolbar>
+          <ToolbarGroup firstChild={true}>
+            <IconButton
+            type="submit"
+            iconStyle={ibStyles.smallIcon}
+            style={ibStyles.small}>
+              <ActionDone color={blue500} />
+            </IconButton>
+          <ToolbarTitle text="حفظ"/>
+          </ToolbarGroup>
+          </Toolbar>
+          </Sticky>
+          : null
+        }
           <Row center="xs">
             <Col xs={12} sm={6} md={5}>
               <Paper style={styles.paperStyle} zDepth={4}>
                 <Row start="xs">
-                  <Formsy.Form
-                    onValid={this.enableButton}
-                    onInvalid={this.disableButton}
-                    onValidSubmit={this.submitForm}
-                    onInvalidSubmit={this.notifyFormError}
-                    onChange={this.formChange}
-                    style={styles.form}
-                  >
                     <div>
                       <h3> عايز تتبرع بيه كم؟</h3>
                       <Row bottom="xs">
                         <Col sm={5} xs={12}>
-                          <FormsyRadioGroup name="amount" defaultSelected="100">
+                          <FormsyRadioGroup name="amount" required>
                             <FormsyRadio
                               value="20"
                               label="20 SDG"
@@ -146,7 +214,7 @@ export default class DonatePage extends Component {
 
                       <h3 > كيف حتدفع؟ </h3>
 
-                      <FormsyRadioGroup name="paymentType">
+                      <FormsyRadioGroup name="paymentType" required>
                         <FormsyRadio
                           value="phoneCreditTransfer"
                           label={pTypes["phoneCreditTransfer"]}
@@ -225,24 +293,35 @@ export default class DonatePage extends Component {
                         <br/>
                         </h4>
                       : null}
-                        <RaisedButton
+                        {/* <RaisedButton
                           type="submit"
-                          label="حفظ"
+                          label="اوعدكم باني سوف ادفع"
                           disabled={!this.state.canSubmit}
                           style={styles.submit}
                           fullWidth={true}
                           primary={true}
-                          />
+                          /> */}
 
-                        <h3>جزاك الله خيراً</h3>
+                        {/* <h3>كتر خيركم و بارك الله فيكم</h3> */}
                       </div>
-                    </Formsy.Form>
                   </Row>
                 </Paper>
               </Col>
             </Row>
           </Grid>
+          </Formsy.Form>
         </div>
       );
     }
   };
+
+
+  // PropTypes
+  DonatePage.propTypes = {
+    router: React.PropTypes.shape({
+      push: React.PropTypes.func.isRequired
+    }).isRequired
+  };
+
+  var decoratedComponent = withRouter(DonatePage);
+  export default decoratedComponent
