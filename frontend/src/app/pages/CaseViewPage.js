@@ -185,7 +185,7 @@ class CaseViewPage extends Component {
                       </Col>
                       <Col xs={6} sm={12}>
                         <h1><b>{moneyRaised} </b> SDG </h1>
-                        <div className="small">تم جمعها من اصل {25550} SDG </div>
+                        <div className="small">تم جمعها من اصل {moneyRequired} SDG </div>
                       </Col>
                       <Col xs={3} sm={12}>
                         <h1><b>{daysRemaining}</b></h1>
