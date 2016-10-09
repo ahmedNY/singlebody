@@ -1,4 +1,3 @@
-import axios from "axios"
 import { observable , autorun } from "mobx"
 
 // import CaseModel from "../models/CaseModel.js"
@@ -11,6 +10,8 @@ class CaseStore {
 	}
 	@observable filter = "case1"
 	@observable cases = []
+	@observable categories = []
+	@observable cities = []
 	caseTemplate =  {
 	  "title": "حالة فريدة",
 	  "summary": "ترميم كامل لعنبر الأطفال في مستشفي البلك ترميم كامل لعنبر الأطفال في مستشفي البلك ",
@@ -72,6 +73,21 @@ class CaseStore {
 		})
 	}
 
+	uploadCaseImage(id, image) {
+		let data = new FormData();
+		data.append("image", image);
+
+		var config = {
+			 onUploadProgress: function(progressEvent) {
+				 var percentCompleted = progressEvent.loaded / progressEvent.total;
+			 }
+		 };
+		return ApiHelper.upload("cases/uploadImage/" + id, data, config)
+		.then(response => {
+			return response.data
+		})
+	}
+
 	updateCase(id) {
 		console.log("store: updating case ")
 		this.isLoading = true
@@ -100,6 +116,26 @@ class CaseStore {
 			this.isLoading = false
 			return error
 		})
+	}
+
+	getCategoryLists() {
+		if(this.categories.length == 0){
+			return ApiHelper.get("lists/categories")
+			.then((response)=>{
+				this.categories = response.data
+				return response.data;
+			})
+		}
+	}
+
+	getCitiesLists() {
+		if(this.cities.length == 0){
+			return ApiHelper.get("lists/cities")
+			.then((response)=>{
+				this.cities = response.data
+				return response.data;
+			})
+		}
 	}
 }
 

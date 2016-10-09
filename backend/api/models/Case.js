@@ -19,7 +19,8 @@ module.exports = {
     // donorsCount: 'integer',
     category: 'string',
     groupName: 'string',
-    image: 'string',
+    imageUrl: 'string',
+    imageFd: 'string',
     owner: "integer",
     createdBy: "integer",
     donations: {

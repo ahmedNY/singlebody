@@ -10,12 +10,16 @@ import MenuItem from 'material-ui/MenuItem';
 import { FormsyCheckbox, FormsyDate, FormsyRadio, FormsyRadioGroup,
     FormsySelect, FormsyText, FormsyTime, FormsyToggle } from 'formsy-material-ui/lib';
 import auth from "../stores/AuthStore";
+import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 
 import AuthorizedPage from "./AuthorizedPage";
 
 import { Grid, Row, Col} from 'react-flexbox-grid';
 
 import store from '../stores/CasesStore.js'
+import config from "../config";
+
+const backendUrl = config.backendUrl();
 
 const errorMessages = {
     wordsError: "Please only use letters",
@@ -24,6 +28,11 @@ const errorMessages = {
 }
 
 const styles = {
+
+    imgStyle: {
+      width: "95%",
+      display: "block"
+    },
     paperStyle: {
       // width: "80%",
       // margin: 'auto',
@@ -37,6 +46,16 @@ const styles = {
     submitStyle: {
       marginTop: 32,
     },
+    exampleImageInput: {
+      cursor: 'pointer',
+      position: 'absolute',
+      top: '0',
+      bottom: '0',
+      right: '0',
+      left: '0',
+      width: '100%',
+      opacity: '0'
+    }
 }
 
 @observer
@@ -46,6 +65,9 @@ class CaseEditorPage extends AuthorizedPage {
       super(props);
       this.state = {
           canSubmit: false,
+          city: "",
+          image: null,
+          imagePreviewUrl: null,
       }
       this.disableButton = this.disableButton.bind(this)
       this.enableButton = this.enableButton.bind(this)
@@ -88,10 +110,17 @@ class CaseEditorPage extends AuthorizedPage {
 
     //we need to fetch case before editing it
     fetchSingleCase = () => {
+      this.fetchLists();
+      let me = this;
        store.getCase(this.props.params.caseId)
-           .then(response => {
-               store.formCase = response.data
-           });
+         .then(response => {
+             store.formCase = response.data;
+         });
+    }
+    //
+    fetchLists =() => {
+      store.getCategoryLists();
+      store.getCitiesLists();
     }
 
 
@@ -108,7 +137,6 @@ class CaseEditorPage extends AuthorizedPage {
   }
 
   submitForm = (data) => {
-    // alert(JSON.stringify(data, null, 4));
 
     store.formCase.title = data.title;
     store.formCase.summary = data.summary;
@@ -118,18 +146,17 @@ class CaseEditorPage extends AuthorizedPage {
     store.formCase.section = data.section;
     store.formCase.moneyRequired = data.moneyRequired;
     store.formCase.groupName = data.groupName;
-    store.formCase.image = data.image;
-
     let action = null
     if(this.isEditingMode)
         action = store.updateCase(this.props.params.caseId)
     else
         action = store.insertCase()
-
     action.then(data => {
-        console.log("we are changeing route")
-        console.log(data)
-        this.props.router.push("cases/" + data.id)
+        // Uploading case image
+        store.uploadCaseImage(data.id, this.state.image)
+        .then( () => {
+          this.props.router.push("cases/" + data.id)
+        });
     })
   }
 
@@ -137,27 +164,93 @@ class CaseEditorPage extends AuthorizedPage {
     console.error('Form error:', data);
   }
 
+  formChanged = (values) => {
+    this.setState({city: values.city})
+  }
 
+  imageChanged = (e) => {
+    console.log(e.target.files[0])
+    let reader = new FileReader();
+   let file = e.target.files[0];
+
+   reader.onloadend = () => {
+     this.setState({
+       image: file,
+       imagePreviewUrl: reader.result
+     });
+   }
+
+   reader.readAsDataURL(file)
+  }
 
   render = () => {
     const {paperStyle, switchStyle, submitStyle } = styles;
     const { wordsError, numericError, urlError } =    errorMessages;
     const { id, title, summary, story, category, city, section,
-            moneyRaised, moneyRequired, daysRemaining, groupName, image } = store.formCase
+            moneyRaised, moneyRequired, daysRemaining, groupName, imageUrl } = store.formCase
+
+    const categoriesItems = store.categories.map((c, i) => {
+      return (
+        <MenuItem key={i} value={c} primaryText={c} />
+      )
+    })
+
+    const citiesItems = store.cities.map((c, i) => {
+      return (
+        <MenuItem key={i} value={c.city} primaryText={c.city} />
+      )
+    })
+
+    const citySections = store.cities.find(c => c.city == this.state.city);
+
+    const sectionsItems = !citySections ? [] : citySections.sections.map((s, i) => {
+      return (
+        <MenuItem key={i} value={s} primaryText={s} />
+      )
+    })
+
+    let {imagePreviewUrl} = this.state;
+    let $imagePreview = null;
+    if (imagePreviewUrl) {
+      $imagePreview = (
+      <CardMedia
+        overlay={<CardTitle subtitle={this.state.image.name} />}>
+          <img style={styles.imgStyle} src={imagePreviewUrl} />
+      </CardMedia>);
+    } else
+    if (imageUrl) {
+      $imagePreview = (
+      <CardMedia>
+          <img style={styles.imgStyle} src={backendUrl + imageUrl} />
+      </CardMedia>);
+    }
 
     return (
         <Grid>
-          <Row center="xs">
+          <Row around="xs">
             <Col xs={12} sm={8}>
               <Paper style={styles.paperStyle} zDepth={4}>
                   <h3>{this.isEditingMode ? "تعديل الحالة" : "اضافة حالة جديدة"}</h3>
-                <Row start="xs">
+
+                  <Row end="xs">
+                    <Col>
+                      {$imagePreview}
+                      <br/>
+                      <RaisedButton
+                      containerElement='label'
+                      label='اختر صورة الحالة'>
+                      <input type="file" onChange={this.imageChanged} name="image" style={styles.exampleImageInput}/>
+                      </RaisedButton>
+                      <br/>
+                    </Col>
+                  </Row>
 
                   <Formsy.Form
                     onValid={this.enableButton}
                     onInvalid={this.disableButton}
                     onValidSubmit={this.submitForm}
                     onInvalidSubmit={this.notifyFormError}
+                    onChange={this.formChanged}
                   >
                     <FormsyText
                       name="title"
@@ -177,7 +270,6 @@ class CaseEditorPage extends AuthorizedPage {
                       hintText="اوصف الحالة باختصار"
                       floatingLabelText="وصف مختصر للحالة"
                       multiLine={true}
-                      rows={2}
                       fullWidth={true}
                     />
                     <FormsyText
@@ -189,7 +281,6 @@ class CaseEditorPage extends AuthorizedPage {
                       hintText="اوصف الحالة بالتفصيل"
                       floatingLabelText="تفاصيل الحالة"
                       multiLine={true}
-                      rows={4}
                       fullWidth={true}
                     />
                     <FormsyText
@@ -201,24 +292,28 @@ class CaseEditorPage extends AuthorizedPage {
                       floatingLabelText="المبلغ المطلوب"
                     />
                     <br/>
-                    <FormsyText
+                    <FormsySelect
                       name="city"
                       value={city}
-                      validations={"minLength:3"}
-                      validationError={wordsError}
+                      onClick={this.fetchLists}
                       required
                       hintText="ما هي المدينه؟"
                       floatingLabelText="المدينة"
-                    />
-                    <FormsyText
+                    >
+                      {citiesItems}
+                    </FormsySelect>
+
+                    <FormsySelect
                       name="section"
                       value={section}
-                      validations={"minLength:3"}
-                      validationError={wordsError}
                       required
                       hintText="في اي حي؟"
                       floatingLabelText="الحي"
-                    />
+                    >
+                      {sectionsItems}
+                    </FormsySelect>
+
+
                     <FormsyText
                       name="groupName"
                       value={groupName}
@@ -227,36 +322,27 @@ class CaseEditorPage extends AuthorizedPage {
                       required
                       floatingLabelText="ابمجموعة"
                     />
+
                     <FormsySelect
                       name="category"
                       required
+                      onClick={this.fetchLists}
                       floatingLabelText="تصنيف الحالة"
                       value={category}
                     >
-                      <MenuItem value={'عمليات'} primaryText="عمليات" />
-                      <MenuItem value={'ادوية'} primaryText="ادوية" />
-                      <MenuItem value={'مشروع بناء'} primaryText="مشروع بناء" />
+                      {categoriesItems}
                     </FormsySelect>
 
                     <br/>
 
-                    <FormsyText
-                      name="image"
-                      value={image}
-                      validations={"minLength:3"}
-                      validationError={wordsError}
-                      required
-                      floatingLabelText="الصورة"
-                    />
-                    <br/>
                     <RaisedButton
                       style={submitStyle}
                       type="submit"
                       label="حفظ"
+                      primary={true}
                       disabled={!this.state.canSubmit}
                     />
                   </Formsy.Form>
-                </Row>
               </Paper>
             </Col>
           </Row>

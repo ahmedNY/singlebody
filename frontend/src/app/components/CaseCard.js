@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import LinearProgress from 'material-ui/LinearProgress';
 import LocationIcon from 'material-ui/svg-icons/communication/location-on';
+import config from "../config";
 
 
 const {Row, Col} = require('react-flexbox-grid');
@@ -26,11 +27,13 @@ const imageStyle = {
 
 }
 
+const backendUrl = config.backendUrl();
+
 export default class CaseCard extends Component {
   render() {
 
     const { id, title, summary, city, section,
-      moneyRaised, moneyRequired, daysRemaining, groupName , image} = this.props.caseModel
+      moneyRaised, moneyRequired, daysRemaining, groupName , imageUrl} = this.props.caseModel
 
   const moneyRaisedPer = Math.round( (moneyRaised / moneyRequired) * 100 )
 
@@ -38,7 +41,7 @@ export default class CaseCard extends Component {
         <Card style={cardStyle}>
           <a href={"#/cases/" + id}>
             <CardMedia>
-              <img src={"img/" + image} style={imageStyle}/>
+              <img src={backendUrl + imageUrl} style={imageStyle}/>
             </CardMedia>
           </a>
           <a style={titleStyle} href={"#/cases/" + id}>

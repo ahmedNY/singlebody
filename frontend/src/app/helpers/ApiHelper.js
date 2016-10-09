@@ -1,25 +1,13 @@
 import axios from "axios";
-import auth from "../stores/AuthStore"
-
-// const HOSTNAME = "localhost";
-const HOSTNAME = null;
-const PORT = "1337";
-const PREFIX = null; //"api"
-
+import auth from "../stores/AuthStore";
+import config from "../config";
 
 class ApiHelper {
   constructor() {
-    let hostName = HOSTNAME ? HOSTNAME : window.location.hostname;;
-    let port = PORT ? PORT : window.location.port;
-    let host = hostName + ":" + port;
-    host = PREFIX ? (host + "/" + PREFIX ): host
-    if(!hostName && !port)
-      host = window.location.host
-    this.url = "http://" + host
+    this.url = config.backendUrl();
     this.prepUrl = this.prepUrl.bind(this)
     this.get = this.get.bind(this)
     this.post = this.post.bind(this)
-
   }
 
   prepUrl(route){
@@ -59,6 +47,18 @@ class ApiHelper {
     return axios.post(this.prepUrl(route), data, this.makeRequestConfig(true))
           .then( response => {
             console.log("POST::" + response.data)
+            return response
+          })
+          .catch( error => {
+            console.log("ERROR POST: " + error)
+            throw error
+          })
+  }
+
+  upload(route, data, config) {
+    return axios.post(this.prepUrl(route), data, config)
+          .then( response => {
+            console.log("POST::" + JSON.stringify(response.data))
             return response
           })
           .catch( error => {
