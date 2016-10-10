@@ -95,6 +95,14 @@ class AuthStore {
       return this.user;
     })
   }
+
+  getUsersList = () => {
+    console.warn("Fetching all users data")
+    return ApiHelper.get("users", true)
+    .then(response => {
+      return response.data;
+    })
+  }
 }
 
 var store = window.store = new AuthStore;

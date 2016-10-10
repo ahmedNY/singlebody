@@ -123,7 +123,6 @@ class DonationsAddPage extends Component {
     }
 
     submitForm = (data) => {
-      console.log(data);
       if(data.amount === -1){
         data.amount = data.otherAmount;
       }

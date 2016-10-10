@@ -14,6 +14,29 @@ module.exports = require('waterlock').actions.user({
       res.ok({
         role: "registered"
       })
+    },
+
+    find: function(req, res) {
+      Auth.find().then(function(users){
+        var result = [];
+        for (var i = 0; i < users.length; i++) {
+          var user = users[i];
+          var name = "";
+
+          if(user.name) {
+            name = user.name
+          }else if (user.email) {
+            name = user.email
+          }
+
+          result.push(
+            {
+              id: user.id,
+              name: name,
+            });
+        }
+        return res.json(result)
+      })
     }
 
 });

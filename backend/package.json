@@ -26,6 +26,7 @@
     "sails-disk": "~0.10.9",
     "sails-mysql": "^0.11.5",
     "skipper-disk": "^0.5.4",
+    "waterline-criteria": "^1.0.1",
     "waterlock": "git+https://github.com/ahmedNY/waterlock.git",
     "waterlock-facebook-auth": "^0.1.2-rc1",
     "waterlock-google-auth": "^0.1.2-rc1",

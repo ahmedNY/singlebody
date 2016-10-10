@@ -55,7 +55,7 @@ module.exports = require('waterlock').waterlocked({
 	},
 
   uploadImage: function (req, res) {
-  let uploadDir = require('path').resolve(sails.config.appPath, 'assets/images');
+  var uploadDir = require('path').resolve(sails.config.appPath, 'assets/images');
   req.file('image').upload({
     // don't allow the total upload size to exceed ~10MB
     maxBytes: 10000000,
@@ -111,7 +111,7 @@ module.exports = require('waterlock').waterlocked({
 
     // set the filename to the same file as the file uploaded
     res.set("Content-disposition", "attachment; filename='" + _case.imageFd + "'");
-    let uploadDir = require('path').resolve(sails.config.appPath, 'assets/images');
+    var uploadDir = require('path').resolve(sails.config.appPath, 'assets/images');
     // Stream the file down
     fileAdapter.read(uploadDir + "/" + _case.imageFd)
     .on('error', function (err){

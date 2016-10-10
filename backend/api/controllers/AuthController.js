@@ -21,7 +21,6 @@ module.exports = require('waterlock').waterlocked({
         return Auth.findOne({id: jwt.owner.auth}).populate("roles");
     }).then(function(auth){
       result.userId = auth.id;
-      result.username = auth.username;
       result.email = auth.email;
       var roles = auth.roles.map(function(role){return role.name});
       result.roles = roles;

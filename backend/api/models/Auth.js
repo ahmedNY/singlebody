@@ -9,10 +9,10 @@
 module.exports = {
 
   attributes: require('waterlock').models.auth.attributes({
-    // username: {
-    //   type: 'string',
-    //   notNull: true
-    // },
+
+    firstName: 'string',
+    lastName: 'string',
+    fullName: 'string',
 
     roles: {
       collection: 'Role',
@@ -24,22 +24,17 @@ module.exports = {
       collection: "Permission",
       via: "user"
     },
-    
+
     donations: {
       collection: "Donation",
       via: "owner"
     }
   }),
 
-  beforeCreate: require('waterlock').models.auth.beforeCreate,
   beforeUpdate: require('waterlock').models.auth.beforeUpdate,
 
-  beforeCreate: function (user, next) {
-    if (_.isEmpty(user.username)) {
-      user.username = user.email;
-    }
-    next();
-  },
+  beforeCreate: require('waterlock').models.auth.beforeCreate,
+
 
   afterCreate: [
     function setOwner (auth, next) {

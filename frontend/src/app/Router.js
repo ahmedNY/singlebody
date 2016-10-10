@@ -13,6 +13,10 @@ import DonationsListPage from './pages/DonationsListPage.js';
 import DonationsAddPage from './pages/DonationsAddPage.js';
 import DonationsEditPage from './pages/DonationsEditPage.js';
 
+import GroupsAddPage from "./pages/GroupsAddPage";
+import GroupsEditPage from "./pages/GroupsEditPage";
+import GroupsListPage from "./pages/GroupsListPage";
+
 import auth from './stores/AuthStore';
 
 let requireAuth = (nextState, replace) => {
@@ -28,10 +32,12 @@ let router = () => (
     <Router history={hashHistory}>
       <Route path="/" component={Layout}>
         <IndexRoute component={CasesPage}/>
+
         {/* Cases */}
         <Route path="cases/addcase" component={CaseEditorPage} onEnter={requireAuth} authorize={['admin']} />
         <Route path="cases/edit/:caseId" component={CaseEditorPage} onEnter={requireAuth} authorize={['admin']} />
         <Route path="cases/:caseId" component={CaseViewPage}/>
+
         {/* Donations */}
         <Route path="donations" onEnter={requireAuth} authorize={['registered']}>
           <IndexRoute component={DonationsListPage}/>
@@ -39,6 +45,12 @@ let router = () => (
           <Route path="edit/:donationId" component={DonationsEditPage} />
         </Route>
 
+        {/* Groups */}
+        <Route path="groups" onEnded={requireAuth} authorize={["admin"]}>
+            <IndexRoute component={GroupsListPage}/>
+            <Route path="add" component={GroupsAddPage}/>
+            <Route path="edit/:groupId" component={GroupsEditPage}/>
+        </Route>
         {/* Authentication */}
         <Route path="login" component={LoginPage}/>
         <Route path="restricted" component={RestrictedPage}/>

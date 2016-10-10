@@ -35,7 +35,7 @@ function configure() {
 }
 
 function initialize(next) {
-  let config = sails.config.permissions
+  var config = sails.config.permissions
 
   installModelOwnership()
   sails.after(config.afterEvent, function(){
@@ -54,15 +54,15 @@ function initialize(next) {
 
   sails.after('hook:orm:loaded', function(){
     sails.models.model.count()
-      .then(count => {
+      .then(function(count) {
         if (count === _.keys(sails.models).length) return next()
 
         return initializeFixtures()
-          .then(() => {
+          .then(function() {
             next()
           })
       })
-      .catch(error => {
+      .catch(function(error){
         sails.log.error(error)
         next(error)
       })
@@ -82,7 +82,7 @@ function installModelOwnership() {
   var models = sails.models
   if (sails.config.models.autoCreatedBy === false) return
 
-  _.each(models, model => {
+  _.each(models, function(model) {
     if (model.autoCreatedBy === false) return
 
     _.defaults(model.attributes, {
@@ -102,35 +102,35 @@ function initializeFixtures() {
   var fixturesPath = path.resolve(__dirname, '../../../config/fixtures/')
   var models, roles;
   return require(path.resolve(fixturesPath, 'model')).createModels()
-    .then(_models => {
-      models = _models
+    .then(function(_model) {
+      models = _model;
       sails.hooks.permissions._modelCache = _.indexBy(models, 'identity')
 
       return require(path.resolve(fixturesPath, 'role')).create()
     })
-    .then(_roles => {
+    .then(function(_roles) {
       roles = _roles
       var userModel = _.find(models, { name: 'User' })
       return require(path.resolve(fixturesPath, 'user')).create(roles, userModel)
     })
-    .then(() => {
+    .then(function() {
       return sails.models.auth.findOne({ email: sails.config.permissions.adminEmail })
     })
-    .then(user => {
+    .then(function(user) {
       sails.log('sails-permissions: created admin user:', user)
       user.createdBy = user.id
       user.owner = user.id
       delete user.password
       return user.save()
     })
-    .then(admin => {
+    .then(function(admin) {
       return require(path.resolve(fixturesPath, 'permission')).create(roles, models, admin, sails.config.permissions);
     })
     .then(function(){
       sails.log.debug(" Adding sample cases")
       return require(path.resolve(fixturesPath, 'case')).create()
     })
-    .catch(error => {
+    .catch(function(error) {
       sails.log.error(error)
     })
 }
