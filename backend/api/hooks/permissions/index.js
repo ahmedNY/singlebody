@@ -118,8 +118,9 @@ function initializeFixtures() {
     })
     .then(function(user) {
       sails.log('sails-permissions: created admin user:', user)
-      user.createdBy = user.id
-      user.owner = user.id
+      user.createdBy = user.id;
+      user.owner = user.id;
+      user.roles.add(_.find(roles, { name: 'admin' }).id);
       delete user.password
       return user.save()
     })

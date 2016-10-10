@@ -20,7 +20,7 @@ exports.create = function (roles, userModel) {
       return sails.models.auth.create({
         password: sails.config.permissions.adminPassword,
         email: sails.config.permissions.adminEmail,
-        roles: [ _.find(roles, { name: 'admin' }).id ],
+        // roles: [ _.find(roles, { name: 'admin' }).id ],
         createdBy: 1,
         owner: 1,
         model: userModel.id
