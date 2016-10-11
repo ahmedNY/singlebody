@@ -13,9 +13,9 @@ module.exports = {
       unique: true,
     },
     about: "STRING",
-    admin: {
-      model: 'auth',
-      required: true
+    admins: {
+      Collection: 'auth',
+      via: "group"
     },
     imageUrl: 'STRING',
     imageFd: 'STRING',

@@ -19,9 +19,6 @@ module.exports = {
       type: 'string',
       notNull: true
     },
-    // attributes: {
-    //   type: 'json'
-    // },
     permissions: {
       collection: 'Permission',
       via: 'model'

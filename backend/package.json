@@ -24,7 +24,7 @@
     "rc": "1.0.1",
     "sails": "~0.12.4",
     "sails-disk": "~0.10.9",
-    "sails-mysql": "^0.11.5",
+    "sails-mysql": "git+https://github.com/matuck/sails-mysql.git",
     "skipper-disk": "^0.5.4",
     "waterline-criteria": "^1.0.1",
     "waterlock": "git+https://github.com/ahmedNY/waterlock.git",

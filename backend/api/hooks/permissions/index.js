@@ -106,6 +106,10 @@ function initializeFixtures() {
       models = _model;
       sails.hooks.permissions._modelCache = _.indexBy(models, 'identity')
 
+      return require(path.resolve(fixturesPath, 'group')).create()
+    })
+    .then(function(group) {
+      sails.log.debug("added defualt groups")
       return require(path.resolve(fixturesPath, 'role')).create()
     })
     .then(function(_roles) {
@@ -121,6 +125,7 @@ function initializeFixtures() {
       user.createdBy = user.id;
       user.owner = user.id;
       user.roles.add(_.find(roles, { name: 'admin' }).id);
+      user.roles.add(_.find(roles, { name: 'groupAdmin' }).id);
       delete user.password
       return user.save()
     })

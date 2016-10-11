@@ -31,6 +31,10 @@ module.exports = {
       via: "owner"
     },
 
+    group: {
+      model: "Group"
+    },
+
   }),
 
   beforeUpdate: require('waterlock').models.auth.beforeUpdate,
