@@ -11,11 +11,12 @@ import store from "../stores/GroupsStore";
 import config from "../config";
 import FloatingButton from "../components/FloatingButton";
 import ContentAddIcon from 'material-ui/svg-icons/content/add';
+import AuthorizedPage from "./AuthorizedPage";
 
 const backendUrl = config.backendUrl();
 
 @observer
-export default class GroupsAddPage extends React.Component {
+export default class GroupsAddPage extends AuthorizedPage {
 
   componentDidMount () {
       // fetch data initially

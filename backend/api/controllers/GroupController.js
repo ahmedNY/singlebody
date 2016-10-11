@@ -7,9 +7,41 @@
 
 module.exports = {
 	findOne: function(req, res) {
-		Group.findOne({id: req.params.id}).populate("admin").then(function(group) {
+		Group.findOne({id: req.params.id})
+		.populate("admin")
+		.then(function(group) {
 			return res.json(group);
 		})
+	},
+
+	create: function(req, res) {
+		var group, role = null;
+		Group.create(req.body)
+		.then(function(group) {
+			sails.log.verbose(group);
+			Role.findOne({name: "groupAdmin"}).then(function(_role) {
+				role = _role;
+				Auth.findOne({id: group.admin}).then(function(auth) {
+					auth.roles.add(role.id);
+					delete auth.password;
+					auth.save().then(function(_auth){
+						return res.ok(group);
+					})
+				})
+			})
+		});
+			// Role.findOne({name: "groupAdmin"}).then(function(_role) {
+			// 	sails.log.verbose(_role);
+			// 	role = _role;
+			// 	Auth.findOne({id: group.admin}).then(function(auth) {
+			// 		sails.log.verbose(auth);
+			// 		auth.roles.add(role.id);
+			// 		auth.save()
+			// 		.then(function() {
+			// 			return res.json(group);
+			// 		})
+			// 	})
+			// })
 	},
 
 	uploadImage: function (req, res) {

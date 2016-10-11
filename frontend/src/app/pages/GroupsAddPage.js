@@ -19,6 +19,7 @@ import PaperComponent from "../components/PaperComponent";
 import uiStore from '../stores/UiStore';
 import auth from '../stores/AuthStore';
 import store from '../stores/GroupsStore';
+import AuthorizedPage from "./AuthorizedPage";
 
 const styles = {
     smallIcon: {
@@ -38,7 +39,7 @@ const errorMessages = {
 }
 
 
-class GroupsAddPage extends React.Component {
+class GroupsAddPage extends AuthorizedPage {
 
   constructor(props){
     super(props);
@@ -138,9 +139,6 @@ class GroupsAddPage extends React.Component {
                 name="about"
                 floatingLabelText="نبذة عن المجموعة"
                 hintText="تحدث عن المجموعه يايجاز"
-                validations={{minLength:5, maxLength:255}}
-                validationError={errorMessages.wordsError}
-                required
                 multiLine={true}
                 fullWidth={true}
               />

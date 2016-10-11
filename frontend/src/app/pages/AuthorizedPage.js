@@ -2,8 +2,9 @@ import React from 'react';
 // import RouteHandler from './RouteHandler';
 import { AuthorizedComponent } from 'react-router-role-authorization';
 import auth from "../stores/AuthStore"
+import {observer} from "mobx-react";
 
-
+@observer
 class AuthorizedPage extends AuthorizedComponent {
 
   constructor(props) {

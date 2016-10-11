@@ -9,8 +9,10 @@ import { cyan500 } from 'material-ui/styles/colors';
 
 import ActionInfo from 'material-ui/svg-icons/action/info';
 import ActionFavorite from 'material-ui/svg-icons/action/favorite';
+import SocialGroup from 'material-ui/svg-icons/social/group';
 import ActionUrgent from 'material-ui/svg-icons/action/hourglass-empty';
 import Avatar from 'material-ui/Avatar';
+import AuthorizedComponent from "../AuthorizedComponent";
 
 @observer
 export default class SideMenu extends React.Component {
@@ -47,6 +49,13 @@ export default class SideMenu extends React.Component {
           <MenuItem onClick={this.close}
             leftIcon={<ActionFavorite />}
             href="#/donations">تبرعاتك</MenuItem>
+
+          <AuthorizedComponent allowedRoles={["admin"]}>
+            <MenuItem onClick={this.close}
+            leftIcon={<SocialGroup />}
+            href="#/groups">االمجموعات</MenuItem>
+          </AuthorizedComponent>
+
         </Drawer>
       </div>
     );

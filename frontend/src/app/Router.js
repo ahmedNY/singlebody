@@ -46,11 +46,10 @@ let router = () => (
         </Route>
 
         {/* Groups */}
-        <Route path="groups" onEnter={requireAuth}>
-            <IndexRoute component={GroupsListPage}/>
-            <Route path="add" component={GroupsAddPage}/>
-            <Route path="edit/:groupId" component={GroupsEditPage} authorize={["groupAdmin"]}/>
-        </Route>
+        <Route path="groups/add" component={GroupsAddPage} authorize={['admin']} onEnter={requireAuth} />
+        <Route path="groups/edit/:groupId" component={GroupsEditPage} authorize={['admin', 'groupAdmin']} onEnter={requireAuth} />
+        <Route path="groups" component={GroupsListPage} authorize={['admin']} onEnter={requireAuth} />
+
         {/* Authentication */}
         <Route path="login" component={LoginPage}/>
         <Route path="restricted" component={RestrictedPage}/>

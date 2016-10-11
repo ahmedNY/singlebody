@@ -14,10 +14,8 @@ module.exports = {
     },
     about: "STRING",
     admin: {
-      model: 'auth'
-    },
-    case: {
-      model: 'case'
+      model: 'auth',
+      required: true
     },
     imageUrl: 'STRING',
     imageFd: 'STRING',

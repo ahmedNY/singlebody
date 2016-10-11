@@ -10,14 +10,17 @@
 
 module.exports = require('waterlock').actions.user({
 
-    permissions: function(req, res){
-      res.ok({
-        role: "registered"
-      })
-    },
-
     find: function(req, res) {
-      Auth.find().then(function(users){
+      Group.find().then(function(groups) {
+        if(groups.length > 0) {
+          var groupsAdmins = groups.map(function(g) {
+            return g.admin;
+          })
+          return Auth.find({  id: { '!' : groupsAdmins } });
+        }
+        return Auth.find();
+      })
+      .then(function(users) {
         var result = [];
         for (var i = 0; i < users.length; i++) {
           var user = users[i];

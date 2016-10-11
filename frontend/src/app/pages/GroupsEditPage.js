@@ -23,6 +23,7 @@ import auth from '../stores/AuthStore';
 import store from '../stores/GroupsStore';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import config from "../config";
+import AuthorizedPage from "./AuthorizedPage";
 
 const styles = {
     // paperStyle: {
@@ -74,7 +75,7 @@ const errorMessages = {
 
 
 @observer
-class GroupsEditPage extends React.Component {
+class GroupsEditPage extends AuthorizedPage {
 
   constructor(props){
     super(props);
@@ -92,10 +93,24 @@ class GroupsEditPage extends React.Component {
   }
 
   componentDidMount() {
-    auth.getUsersList().then((_users) => {
-      this.setState({users: _users})
-    })
-    store.getOneGroup(this.props.params.groupId);
+    store.getOneGroup(this.props.params.groupId).then(group => {
+      if(this.validate(group)) {
+        auth.getUsersList().then((_users) => {
+          this.setState({users: _users})
+        })
+      }
+    });
+  }
+
+  validate = (model) => {
+    let authorized = false;
+    console.log("model.admin.id:" + model.admin.id)
+    console.log("auth.user.id  : " + auth.user.id)
+    authorized = model.admin.id === auth.user.id;
+    if(!authorized) {
+      this.context.router.push(this.notAuthorizedPath);
+    }
+    return authorized;
   }
 
   componentWillUnmount() {

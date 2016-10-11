@@ -120,7 +120,7 @@ class CaseEditorPage extends AuthorizedPage {
     }
 
     componentWillUnmount = () => {
-      store.formCase = null;
+      // store.formCase = null;
     }
 
     //we need to fetch case before editing it

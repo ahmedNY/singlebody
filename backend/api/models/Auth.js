@@ -7,6 +7,7 @@
  */
 
 module.exports = {
+  autoCreatedBy: false,
 
   attributes: require('waterlock').models.auth.attributes({
 
@@ -28,7 +29,8 @@ module.exports = {
     donations: {
       collection: "Donation",
       via: "owner"
-    }
+    },
+
   }),
 
   beforeUpdate: require('waterlock').models.auth.beforeUpdate,
