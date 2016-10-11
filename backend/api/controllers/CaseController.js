@@ -46,12 +46,7 @@ module.exports = require('waterlock').waterlocked({
     // get the current user
     UserService.getUser(req)
     .then(function(auth) {
-      // get the user's group
-      return Group.findOne({admin: auth.id});
-    })
-    .then(function(group) {
-      // set group to user's group
-      req.body.group = group.id
+      req.body.group = auth.group
       return Case.create(req.body);
     })
     .then(function(_case) {

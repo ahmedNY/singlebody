@@ -47,7 +47,8 @@ module.exports = {
       enum: [
         'role',
         'owner',
-        'user'
+        'user',
+        'group',
       ],
       defaultsTo: 'role',
       index: true

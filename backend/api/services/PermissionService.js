@@ -32,6 +32,17 @@ module.exports = {
       return object.owner !== owner;
     };
   },
+  hasAlienObjects: function(objects, user) {
+    if (!_.isArray(objects)) {
+      return PermissionService.isAlienObject(user.group)(objects);
+    }
+    return _.any(objects, PermissionService.isAlienObject(user.group));
+  },
+  isAlienObject: function(group) {
+    return function(object) {
+      return object.group !== group;
+    };
+  },
 
   /**
    * Find objects that some arbitrary action would be performed on, given the
