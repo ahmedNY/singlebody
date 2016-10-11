@@ -21,10 +21,17 @@ const summaryStyle = {
 }
 
 const imageStyle = {
-  // minWidth: "80%",
-  // maxWidth: "80%",
-  // display: "block"
+  maxHeight: "100%",
+  maxWidth: "100%",
+  marginTop: "-20px",
+  marginRight: "0px",
+  marginBottom: "0px",
+  marginLeft: "0px",
+}
 
+const imgContainer = {
+  maxHeight: 200,
+  overflow: "hidden"
 }
 
 const backendUrl = config.backendUrl();
@@ -33,19 +40,20 @@ export default class CaseCard extends Component {
   render() {
 
     const { id, title, summary, city, section,
-      moneyRaised, moneyRequired, daysRemaining, groupName , imageUrl} = this.props.caseModel
-
+      moneyRaised, moneyRequired, daysRemaining, group , imageUrl} = this.props.caseModel
   const moneyRaisedPer = Math.round( (moneyRaised / moneyRequired) * 100 )
 
     return(
         <Card style={cardStyle}>
           <a href={"#/cases/" + id}>
-            <CardMedia>
-              <img src={backendUrl + imageUrl} style={imageStyle}/>
+            <CardMedia mediaStyle={imgContainer}>
+              {/* <div style={imgContainer}> */}
+                <img src={backendUrl + imageUrl} style={imageStyle}/>
+              {/* </div> */}
             </CardMedia>
           </a>
           <a style={titleStyle} href={"#/cases/" + id}>
-            <CardTitle title={title} subtitle={groupName} />
+            <CardTitle title={title} subtitle={group ? group.name : ""} />
           </a>
           <CardText style={summaryStyle}>
             {summary}

@@ -152,7 +152,12 @@ class GroupsEditPage extends React.Component {
     console.error('Form error:', data);
   }
 
-  formChanged = (values) => {
+  removeGroup = () => {
+    if (confirm('هل حقا تريد حذف المجموعة؟')) {
+      store.removeGroup(this.props.params.groupId).then(()=>{
+        this.props.router.push("groups")();
+      })
+    }
   }
 
 
@@ -166,12 +171,12 @@ class GroupsEditPage extends React.Component {
       imageUrl = store.currentGroup.imageUrl;
     }
 
-    let username = "";
+    let adminName = "";
     if(admin) {
-      if(admin.name !== undefined){
-        username = admin.name;
+      if(admin.name){
+        adminName = admin.name;
       }else (
-        username = admin.username
+        adminName = admin.email
       )
     }
 
@@ -200,7 +205,7 @@ class GroupsEditPage extends React.Component {
 
         <ToolbarGroup firstChild={true}>
           <IconButton
-            onClick={this.removeDonation}
+            onClick={this.removeGroup}
             iconStyle={styles.smallIcon}
             style={styles.small}>
               <ActionCancel color={grey500}/>
@@ -231,7 +236,6 @@ class GroupsEditPage extends React.Component {
         onInvalid={this.disableButton}
         onValidSubmit={this.submitForm}
         onInvalidSubmit={this.notifyFormError}
-        onChange={this.formChange}
         style={styles.form}
       >
         {toolbar}
@@ -266,7 +270,7 @@ class GroupsEditPage extends React.Component {
                 floatingLabelText="مدير المجموعة"
                 required
                 options={usersOptions}
-                searchText={username}
+                searchText={adminName}
               />
             </Col>
 

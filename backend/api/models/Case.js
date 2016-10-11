@@ -18,13 +18,16 @@ module.exports = {
     daysRemaining: 'integer',
     // donorsCount: 'integer',
     category: 'string',
-    groupName: 'string',
+    // groupName: 'string',
     imageUrl: 'string',
     imageFd: 'string',
     owner: "integer",
     createdBy: "integer",
+    group: {
+      model: "group"
+    },
     donations: {
       collection: "Donation"
-    }
+    },
   }
 };

@@ -1,4 +1,5 @@
 
+
 // https://github.com/mbrookes/formsy-material-ui/issues/45#issuecomment-200900553
 
 import React, { PropTypes, Component } from 'react';
@@ -14,7 +15,6 @@ class FormsyAutocomplete extends Component {
        value: this.props.defaultValue || this.props.value || '',
     }
   }
-
 
   componentWillMount = () => {
     this.props.setValue(this.props.defaultValue || this.props.value || '');
@@ -51,7 +51,7 @@ class FormsyAutocomplete extends Component {
         onNewRequest={this.handleNewRequest}
         floatingLabelText={this.props.floatingLabelText}
         fullWidth={this.props.fullWidth}
-        searchText={this.props.searchText}
+        searchText={this.props.searchText || ""}
       />
     );
   }

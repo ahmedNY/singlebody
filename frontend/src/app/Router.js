@@ -34,8 +34,8 @@ let router = () => (
         <IndexRoute component={CasesPage}/>
 
         {/* Cases */}
-        <Route path="cases/addcase" component={CaseEditorPage} onEnter={requireAuth} authorize={['admin']} />
-        <Route path="cases/edit/:caseId" component={CaseEditorPage} onEnter={requireAuth} authorize={['admin']} />
+        <Route path="cases/addcase" component={CaseEditorPage} onEnter={requireAuth} authorize={['groupAdmin']} />
+        <Route path="cases/edit/:caseId" component={CaseEditorPage} onEnter={requireAuth} authorize={['groupAdmin']} />
         <Route path="cases/:caseId" component={CaseViewPage}/>
 
         {/* Donations */}
@@ -46,10 +46,10 @@ let router = () => (
         </Route>
 
         {/* Groups */}
-        <Route path="groups" onEnded={requireAuth} authorize={["admin"]}>
+        <Route path="groups" onEnter={requireAuth}>
             <IndexRoute component={GroupsListPage}/>
             <Route path="add" component={GroupsAddPage}/>
-            <Route path="edit/:groupId" component={GroupsEditPage}/>
+            <Route path="edit/:groupId" component={GroupsEditPage} authorize={["groupAdmin"]}/>
         </Route>
         {/* Authentication */}
         <Route path="login" component={LoginPage}/>

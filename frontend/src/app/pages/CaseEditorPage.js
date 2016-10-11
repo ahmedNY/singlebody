@@ -17,6 +17,7 @@ import AuthorizedPage from "./AuthorizedPage";
 import { Grid, Row, Col} from 'react-flexbox-grid';
 
 import store from '../stores/CasesStore.js'
+import uiStore from '../stores/UiStore.js'
 import config from "../config";
 
 const backendUrl = config.backendUrl();
@@ -30,8 +31,18 @@ const errorMessages = {
 const styles = {
 
     imgStyle: {
-      width: "95%",
-      display: "block"
+      maxHeight: "80%",
+      maxWidth: "100%",
+    },
+    imgContainer: {
+      maxHeight: 250,
+      overflow: "hidden"
+    },
+    noImgContainer: {
+      height: 250,
+      borderWidth: 2,
+      borderColor: "#a2a2a2",
+      borderStyle: "dashed"
     },
     paperStyle: {
       // width: "80%",
@@ -108,12 +119,17 @@ class CaseEditorPage extends AuthorizedPage {
 
     }
 
+    componentWillUnmount = () => {
+      store.formCase = null;
+    }
+
     //we need to fetch case before editing it
     fetchSingleCase = () => {
       this.fetchLists();
       let me = this;
        store.getCase(this.props.params.caseId)
          .then(response => {
+             this.check(response.data);
              store.formCase = response.data;
          });
     }
@@ -145,7 +161,7 @@ class CaseEditorPage extends AuthorizedPage {
     store.formCase.city = data.city;
     store.formCase.section = data.section;
     store.formCase.moneyRequired = data.moneyRequired;
-    store.formCase.groupName = data.groupName;
+
     let action = null
     if(this.isEditingMode)
         action = store.updateCase(this.props.params.caseId)
@@ -153,10 +169,14 @@ class CaseEditorPage extends AuthorizedPage {
         action = store.insertCase()
     action.then(data => {
         // Uploading case image
-        store.uploadCaseImage(data.id, this.state.image)
-        .then( () => {
-          this.props.router.push("cases/" + data.id)
-        });
+        if(this.state.image) {
+          store.uploadCaseImage(data.id, this.state.image)
+          .then( () => {
+            this.props.router.push("cases/" + data.id)
+          });
+        }
+        this.props.router.push("cases/" + data.id)
+
     })
   }
 
@@ -187,7 +207,7 @@ class CaseEditorPage extends AuthorizedPage {
     const {paperStyle, switchStyle, submitStyle } = styles;
     const { wordsError, numericError, urlError } =    errorMessages;
     const { id, title, summary, story, category, city, section,
-            moneyRaised, moneyRequired, daysRemaining, groupName, imageUrl } = store.formCase
+            moneyRaised, moneyRequired, daysRemaining, imageUrl } = store.formCase || {}
 
     const categoriesItems = store.categories.map((c, i) => {
       return (
@@ -215,14 +235,17 @@ class CaseEditorPage extends AuthorizedPage {
       $imagePreview = (
       <CardMedia
         overlay={<CardTitle subtitle={this.state.image.name} />}>
+        <div style={styles.imgContainer}>
           <img style={styles.imgStyle} src={imagePreviewUrl} />
+        </div>
       </CardMedia>);
-    } else
-    if (imageUrl) {
-      $imagePreview = (
-      <CardMedia>
+    } else if (imageUrl) {
+      $imagePreview =
+        <div style={styles.imgContainer}>
           <img style={styles.imgStyle} src={backendUrl + imageUrl} />
-      </CardMedia>);
+        </div>
+    }else {
+      $imagePreview = <div style={styles.noImgContainer}></div>
     }
 
     return (
@@ -232,15 +255,16 @@ class CaseEditorPage extends AuthorizedPage {
               <Paper style={styles.paperStyle} zDepth={4}>
                   <h3>{this.isEditingMode ? "تعديل الحالة" : "اضافة حالة جديدة"}</h3>
 
-                  <Row end="xs">
-                    <Col>
+                  <Row center="xs">
+                    <Col xs={12}>
                       {$imagePreview}
                       <br/>
-                      <RaisedButton
-                      containerElement='label'
-                      label='اختر صورة الحالة'>
-                      <input type="file" onChange={this.imageChanged} name="image" style={styles.exampleImageInput}/>
-                      </RaisedButton>
+                        <RaisedButton
+                        primary={true}
+                        containerElement='label'
+                        label={imageUrl || imagePreviewUrl ? "تغيير الصورة" : 'اختر صورة الحالة'}>
+                        <input type="file" onChange={this.imageChanged} name="image" style={styles.exampleImageInput}/>
+                        </RaisedButton>
                       <br/>
                     </Col>
                   </Row>
@@ -312,16 +336,6 @@ class CaseEditorPage extends AuthorizedPage {
                     >
                       {sectionsItems}
                     </FormsySelect>
-
-
-                    <FormsyText
-                      name="groupName"
-                      value={groupName}
-                      validations={"minLength:3"}
-                      validationError={wordsError}
-                      required
-                      floatingLabelText="ابمجموعة"
-                    />
 
                     <FormsySelect
                       name="category"

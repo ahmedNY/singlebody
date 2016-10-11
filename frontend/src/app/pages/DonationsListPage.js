@@ -90,7 +90,7 @@ export default class DonationsPage extends React.Component {
           :
           <Row center="xs">
             <Col>
-              <h1>عذراً انت لم تقم بالتبرع بعد 🤔</h1>
+              <h2>عذراً، لم تقم بالتبرع بعد 🤔</h2>
               <RaisedButton
               href="#/"
               label="عرض حالات تحتاج العون"

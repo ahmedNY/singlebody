@@ -12,7 +12,10 @@ import auth from "../stores/AuthStore";
 export default class CasePage extends Component {
     constructor() {
         super()
-        store.getCases()
+    }
+
+    componentDidMount() {
+      store.getCases()
     }
 
     render() {
@@ -29,12 +32,14 @@ export default class CasePage extends Component {
                 <Row >
                     {cases}
                 </Row>
-                {auth.isLogedIn ?
-                    <FloatingButton index={1} href={"#/cases/addcase"}>
-                        <ContentAddIcon/>
-                    </FloatingButton>
-                 : null
-                }
+
+                <FloatingButton
+                  index={1}
+                  href={"#/cases/addcase"}
+                  allowedRoles={["groupAdmin"]}>
+                    <ContentAddIcon/>
+                </FloatingButton>
+
             </div>
         );
     }

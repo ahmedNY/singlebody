@@ -16,6 +16,9 @@ module.exports = {
     admin: {
       model: 'auth'
     },
+    case: {
+      model: 'case'
+    },
     imageUrl: 'STRING',
     imageFd: 'STRING',
   }

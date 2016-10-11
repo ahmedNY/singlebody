@@ -1,5 +1,7 @@
 // Core
 import React from "react";
+import { withRouter } from 'react-router';
+
 // UI
 import { Row, Col } from 'react-flexbox-grid';
 import { Sticky } from 'react-sticky';
@@ -19,19 +21,6 @@ import auth from '../stores/AuthStore';
 import store from '../stores/GroupsStore';
 
 const styles = {
-    // paperStyle: {
-    //   padding: 20,
-    //   marginTop: 20,
-    // },
-    // switchStyle: {
-    //   marginBottom: 16,
-    // },
-    // submit: {
-    //   marginTop: 32,
-    // },
-    // form: {
-    //   width: "100%"
-    // },
     smallIcon: {
       width: 30,
       height: 30,
@@ -49,7 +38,7 @@ const errorMessages = {
 }
 
 
-export default class GroupsAddPage extends React.Component {
+class GroupsAddPage extends React.Component {
 
   constructor(props){
     super(props);
@@ -90,7 +79,7 @@ export default class GroupsAddPage extends React.Component {
     data.admin = id;
     console.log(data);
     store.addGroup(data).then(group => {
-      console.log("Group added succesfully :)")
+      this.props.router.push("groups");
     });
   }
 
@@ -98,13 +87,8 @@ export default class GroupsAddPage extends React.Component {
     console.error('Form error:', data);
   }
 
-  formChanged = (values) => {
-  }
-
-
   render() {
     const usersOptions = this.state.users.map( u => {
-      console.log(u.id)
       return {text: u.name, value: u.id}
     })
     const toolbar = (
@@ -133,7 +117,6 @@ export default class GroupsAddPage extends React.Component {
         onInvalid={this.disableButton}
         onValidSubmit={this.submitForm}
         onInvalidSubmit={this.notifyFormError}
-        onChange={this.formChange}
         style={styles.form}
       >
         {toolbar}
@@ -178,3 +161,13 @@ export default class GroupsAddPage extends React.Component {
     );
   }
 }
+
+// PropTypes
+GroupsAddPage.propTypes = {
+  router: React.PropTypes.shape({
+    push: React.PropTypes.func.isRequired
+  }).isRequired
+};
+
+var decoratedComponent = withRouter(GroupsAddPage);
+export default decoratedComponent

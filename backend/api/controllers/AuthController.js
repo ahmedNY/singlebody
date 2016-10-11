@@ -20,7 +20,7 @@ module.exports = require('waterlock').waterlocked({
         // result.jwt = jwt;
         return Auth.findOne({id: jwt.owner.auth}).populate("roles");
     }).then(function(auth){
-      result.userId = auth.id;
+      result.id = auth.id;
       result.email = auth.email;
       var roles = auth.roles.map(function(role){return role.name});
       result.roles = roles;

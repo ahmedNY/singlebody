@@ -14,6 +14,16 @@ class AuthorizedPage extends AuthorizedComponent {
     this.notAuthorizedPath = '/restricted';
   }
 
+  check(model) {
+    let authorized = false;
+    if(model.owner) {
+      authorized = model.owner === auth.user.id;
+    }
+    if(!authorized) {
+      this.context.router.push(this.notAuthorizedPath);
+    }
+  }
+
 }
 
 export default AuthorizedPage;

@@ -30,7 +30,7 @@ class GroupsStore {
   }
 
   removeGroup(id){
-    throw new Error("Not implementd");
+    return ApiHelper.del("groups/" + id);
   }
 
   uploadGroupImage(id, image) {

@@ -7,9 +7,17 @@ var grants = {
     { action: 'update' },
     { action: 'delete' }
   ],
+  groupAdmin: [
+    { action: 'create' },
+    { action: 'read' },
+    { action: 'update' },
+    { action: 'delete' },
+  ],
   registered: [
     { action: 'create' },
-    { action: 'read' }
+    { action: 'read' },
+    { action: 'update' },
+    { action: 'delete' },
   ],
   public: [
     { action: 'read' }
@@ -17,18 +25,27 @@ var grants = {
 };
 
 var modelRestrictions = {
-  registered: [
+  groupAdmin: [
+    'Donation',
+    'Group',
+    'Case',
     'Role',
     'Permission',
     'User',
-    'Passport'
+  ],
+  registered: [
+    'Donation',
+    'Group',
+    'Case',
+    'Role',
+    'Permission',
+    'User',
   ],
   public: [
     'Role',
     'Permission',
     'User',
     'Model',
-    'Passport'
   ]
 };
 
@@ -40,10 +57,11 @@ var modelRestrictions = {
 exports.create = function (roles, models, admin, config) {
   return Promise.all([
     grantAdminPermissions(roles, models, admin, config),
-    grantRegisteredPermissions(roles, models, admin, config)
+    grantRegisteredPermissions(roles, models, admin, config),
+    grantGroupAdminPermissions(roles, models, admin, config),
   ])
   .then(function (permissions) {
-    //sails.log.verbose('created', permissions.length, 'permissions');
+    sails.log.verbose('created', permissions.length, 'permissions');
     return permissions;
   });
 };
@@ -91,6 +109,39 @@ function grantRegisteredPermissions (roles, models, admin, config) {
       action: 'read',
       role: registeredRole.id,
       relation: 'owner'
+    },
+    {
+      model: _.find(models, { name: 'Donation' }).id,
+      action: 'create',
+      role: registeredRole.id,
+    },
+    {
+      model: _.find(models, { name: 'Donation' }).id,
+      action: 'update',
+      role: registeredRole.id,
+      relation: 'owner'
+    },
+    {
+      model: _.find(models, { name: 'Donation' }).id,
+      action: 'delete',
+      role: registeredRole.id,
+      relation: 'owner'
+    },
+    {
+      model: _.find(models, { name: 'Donation' }).id,
+      action: 'read',
+      role: registeredRole.id,
+      relation: 'owner'
+    },
+    {
+      model: _.find(models, { name: 'Case' }).id,
+      action: 'read',
+      role: registeredRole.id,
+    },
+    {
+      model: _.find(models, { name: 'Group' }).id,
+      action: 'read',
+      role: registeredRole.id,
     }
   ];
 
@@ -107,6 +158,114 @@ function grantRegisteredPermissions (roles, models, admin, config) {
         model: modelEntity.id,
         action: permission.action,
         role: registeredRole.id,
+      };
+    });
+  }));
+
+
+  return Promise.all(
+    basePermissions.concat(grantPermissions).map(function(permission) {
+      return sails.models.permission.findOrCreate(permission, permission);
+    })
+  );
+}
+
+function grantGroupAdminPermissions (roles, models, admin, config) {
+  var groupAdminRole = _.find(roles, { name: 'groupAdmin' });
+  var basePermissions = [
+    {
+      model: _.find(models, { name: 'Permission' }).id,
+      action: 'read',
+      role: groupAdminRole.id
+    },
+    {
+      model: _.find(models, { name: 'Model' }).id,
+      action: 'read',
+      role: groupAdminRole.id
+    },
+    {
+      model: _.find(models, { name: 'User' }).id,
+      action: 'update',
+      role: groupAdminRole.id,
+      relation: 'owner'
+    },
+    {
+      model: _.find(models, { name: 'User' }).id,
+      action: 'read',
+      role: groupAdminRole.id,
+      relation: 'owner'
+    },
+    {
+      model: _.find(models, { name: 'Group' }).id,
+      action: 'read',
+      role: groupAdminRole.id,
+    },
+    {
+      model: _.find(models, { name: 'Group' }).id,
+      action: 'update',
+      role: groupAdminRole.id,
+      relation: 'owner'
+    },
+    {
+      model: _.find(models, { name: 'Case' }).id,
+      action: 'read',
+      role: groupAdminRole.id,
+    },
+    {
+      model: _.find(models, { name: 'Case' }).id,
+      action: 'update',
+      role: groupAdminRole.id,
+      relation: 'owner'
+    },
+    {
+      model: _.find(models, { name: 'Case' }).id,
+      action: 'delete',
+      role: groupAdminRole.id,
+      relation: 'owner'
+    },
+    {
+      model: _.find(models, { name: 'Case' }).id,
+      action: 'create',
+      role: groupAdminRole.id,
+    },
+    {
+      model: _.find(models, { name: 'Donation' }).id,
+      action: 'delete',
+      role: groupAdminRole.id,
+      relation: 'owner'
+    },
+    {
+      model: _.find(models, { name: 'Donation' }).id,
+      action: 'update',
+      role: groupAdminRole.id,
+      relation: 'owner'
+    },
+    {
+      model: _.find(models, { name: 'Donation' }).id,
+      action: 'read',
+      role: groupAdminRole.id,
+      relation: 'owner'
+    },
+    {
+      model: _.find(models, { name: 'Donation' }).id,
+      action: 'create',
+      role: groupAdminRole.id,
+    },
+  ];
+
+  // XXX copy/paste from above. terrible. improve.
+  var permittedModels = _.filter(models, function (model) {
+    return !_.contains(modelRestrictions.registered, model.name);
+  });
+  var grantPermissions = _.flatten(_.map(permittedModels, function (modelEntity) {
+
+    grants.registered = _.get(config, 'grants.registered') || grants.registered;
+
+    return _.map(grants.registered, function (permission) {
+      return {
+        model: modelEntity.id,
+        action: permission.action,
+        role: groupAdminRole.id,
       };
     });
   }));

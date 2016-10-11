@@ -45,7 +45,7 @@ export default class GroupsAddPage extends React.Component {
     return (
       <div>
 
-      <FloatingButton index={1} href={"#/groups/add"}>
+      <FloatingButton allowedRoles={["admin"]} index={1} href={"#/groups/add"}>
         <ContentAddIcon/>
       </FloatingButton>
       <PaperComponent>

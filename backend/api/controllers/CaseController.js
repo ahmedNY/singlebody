@@ -1,9 +1,12 @@
+var UserService = require("../services/UserService");
 
 module.exports = require('waterlock').waterlocked({
   pluralize: true,
 
   find: function(req, res) {
-    Case.find().populate("donations")
+    Case.find()
+    .populate("donations")
+    .populate("group")
     .then(function(_cases) {
       for (var i = 0; i < _cases.length; i++) {
         _case = _cases[i];
@@ -22,7 +25,10 @@ module.exports = require('waterlock').waterlocked({
 
 	findOne: function(req, res) {
 		Case.findOne({id: req.params.id})
+    .populate("group")
     .then(function(_case) {
+      if(!_case) return res.notFound("case not found");
+
       Donation.find({case: req.params.id})
       .then(function(_donations){
         _case.donorsCount = _donations.length
@@ -36,10 +42,21 @@ module.exports = require('waterlock').waterlocked({
 		});
 	},
 
-	create: function(req, res){
-		Case.create(req.body).then(function(_case){
-			return res.ok(_case);
-		})
+	create: function(req, res) {
+    // get the current user
+    UserService.getUser(req)
+    .then(function(auth) {
+      // get the user's group
+      return Group.findOne({admin: auth.id});
+    })
+    .then(function(group) {
+      // set group to user's group
+      req.body.group = group.id
+      return Case.create(req.body);
+    })
+    .then(function(_case) {
+      return res.ok(_case);
+    })
 	},
 
 	update: function(req, res){

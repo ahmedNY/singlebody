@@ -8,7 +8,6 @@
 module.exports = {
 	findOne: function(req, res) {
 		Group.findOne({id: req.params.id}).populate("admin").then(function(group) {
-
 			return res.json(group);
 		})
 	},

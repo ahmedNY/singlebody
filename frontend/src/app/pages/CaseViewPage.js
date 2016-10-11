@@ -130,26 +130,16 @@ class CaseViewPage extends Component {
   render() {
 
     const { id, title, summary, city, section, moneyRaised, moneyRequired,
-        daysRemaining, donorsCount, story, category, groupName, imageUrl } = store.currentCase
-
+        daysRemaining, donorsCount, story, owner, group, category, imageUrl } = store.currentCase
     const moneyRaisedPer = Math.round( (moneyRaised / moneyRequired) * 100 );
     const isLoading = store.isLoading
 
     return(
         <div>
-        {isLoading ?
-          // Display loading component
-            <Row center="xs">
-              <Col xs={6}>
-                <CircularProgress size={2}/>
-              </Col>
-            </Row>:
-
-          // Display CaseViewPage component
           <div>
             <Paper style={paperStyle} zDepth={1}>
               <h1 style={titleStyle}>{title}</h1>
-              <h3 style={subTitleStyle}>{groupName}</h3>
+              <h3 style={subTitleStyle}>{group ? group.name : ""}</h3>
               <Row>
 
                 <Col xs={12} sm={8}>
@@ -243,20 +233,20 @@ class CaseViewPage extends Component {
                </Tab>
              </Tabs>
           </div>
-        }
-        {auth.isLogedIn ?
-          <div>
-            <FloatingButton index={1} href={"#/cases/addcase"}>
-              <ContentAddIcon/>
-            </FloatingButton>
-            <FloatingButton index={2} href={"#/cases/edit/" + id} backgroundColor={orange500}>
-              <ModeEditIcon/>
-            </FloatingButton>
-            <FloatingButton index={3} onClick={this.handleDeleteButton.bind(this)} backgroundColor={red500}>
-              <DeleteIcon/>
-            </FloatingButton>
-          </div>
-          : null}
+
+
+        <div>
+          <FloatingButton allowedRoles={["groupAdmin"]} index={1} href={"#/cases/addcase"}>
+            <ContentAddIcon/>
+          </FloatingButton>
+          <FloatingButton owner={owner} allowedRoles={["groupAdmin"]} index={2} href={"#/cases/edit/" + id} backgroundColor={orange500}>
+            <ModeEditIcon/>
+          </FloatingButton>
+          <FloatingButton owner={owner} allowedRoles={["groupAdmin"]} index={3} onClick={this.handleDeleteButton.bind(this)} backgroundColor={red500}>
+            <DeleteIcon/>
+          </FloatingButton>
+        </div>
+
         </div>
       );
   }

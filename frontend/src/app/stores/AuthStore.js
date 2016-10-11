@@ -4,6 +4,7 @@ import react from 'react';
 import cookie from 'react-cookie';
 import jwtDecode from 'jwt-decode';
 import Promise from 'bluebird';
+import uiStore from './UiStore'
 
 class AuthStore {
 
@@ -25,6 +26,7 @@ class AuthStore {
   }
 
   login(username, password) {
+    uiStore.isLoading = true;
     return ApiHelper.post("auths/login", {
       email: username,
       password: password,
@@ -34,11 +36,13 @@ class AuthStore {
       console.log(response.data.token)
       this.saveToken(response.data.token);
       this.getCurrentUser();
+      uiStore.isLoading = false;
       return response;
     });
   }
 
   loginWithFacebook = () => {
+    uiStore.isLoading = true;
     return new Promise((resolve, reject) => {
       console.log("login with facebook")
       this.loginModel.visible = false;
@@ -49,8 +53,10 @@ class AuthStore {
           clearInterval(intervalID);
           auth.getUserToken().then(() => {
             resolve(auth.getCurrentUser());
+            uiStore.isLoading = false;
           }).catch((error)=>{
             auth.loginModel.visible = true
+            uiStore.isLoading = false;
             reject(error)
           });
 
@@ -60,6 +66,7 @@ class AuthStore {
   }
 
   logout() {
+    uiStore.isLoading = true;
     return ApiHelper.get("auths/logout", true)
     .then( response => {
       this.authToken = null;
@@ -67,6 +74,7 @@ class AuthStore {
       cookie.remove("authToken");
       cookie.remove("user");
       console.log("loged out...");
+      uiStore.isLoading = false;
       return response;
     });
   }
@@ -77,8 +85,10 @@ class AuthStore {
   }
 
   getUserToken = () => {
+    uiStore.isLoading = true;
     return ApiHelper.get("users/jwt", true).then(response => {
       this.saveToken(response.data.token)
+      uiStore.isLoading = false;
       return response;
     })
   }
@@ -89,17 +99,21 @@ class AuthStore {
   }
 
   getCurrentUser = () => {
+    uiStore.isLoading = true;
     return ApiHelper.get("auths/permissions", true).then(response => {
       this.user = response.data
       cookie.save('user', response.data);
+      uiStore.isLoading = false;
       return this.user;
     })
   }
 
   getUsersList = () => {
+    uiStore.isLoading = true;
     console.warn("Fetching all users data")
     return ApiHelper.get("users", true)
     .then(response => {
+      uiStore.isLoading = false;
       return response.data;
     })
   }
