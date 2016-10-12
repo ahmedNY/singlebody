@@ -9,10 +9,7 @@
  */
 
 module.exports = require('waterlock').waterlocked({
-  /* e.g.
-    action: function(req, res){
-    }
-  */
+
   permissions: function(req, res){
     var result = {};
     Jwt.findOne({token: req.headers.access_token}).populate("owner")

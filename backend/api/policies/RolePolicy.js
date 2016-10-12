@@ -23,10 +23,6 @@ module.exports = function(req, res, next) {
     return next();
   }
 
-  sails.log.verbose("-------------------------------------")
-  sails.log.verbose(relations)
-  sails.log.verbose("-------------------------------------")
-
   PermissionService.findTargetObjects(req)
     .then(function(objects) {
         // PermissionService.isAllowedToPerformAction checks if the user has 'user' based permissions (vs role or owner based permissions)

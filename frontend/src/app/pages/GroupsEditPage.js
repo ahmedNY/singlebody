@@ -2,6 +2,7 @@
 import React from "react";
 import { withRouter } from 'react-router';
 import { observer} from "mobx-react";
+import mobx from "mobx";
 
 // UI
 import { Row, Col } from 'react-flexbox-grid';
@@ -14,9 +15,16 @@ import { FormsySelect, FormsyText } from 'formsy-material-ui/lib';
 import { green500, grey500 } from 'material-ui/styles/colors';
 import ActionDone from 'material-ui/svg-icons/action/done';
 import ActionCancel from 'material-ui/svg-icons/action/delete';
+import ContentClear from 'material-ui/svg-icons/content/clear';
+import Avatar from 'material-ui/Avatar';
+
+//Chip input
+import Chip from 'material-ui/Chip';
+import ChipInput from 'material-ui-chip-input'
+import { blue300 } from "material-ui/styles/colors"
 
 // Project
-import FormsyAutocomplete from "../components/FormsyAutocomplete";
+
 import PaperComponent from "../components/PaperComponent";
 import uiStore from '../stores/UiStore';
 import auth from '../stores/AuthStore';
@@ -26,19 +34,6 @@ import config from "../config";
 import AuthorizedPage from "./AuthorizedPage";
 
 const styles = {
-    // paperStyle: {
-    //   padding: 20,
-    //   marginTop: 20,
-    // },
-    // switchStyle: {
-    //   marginBottom: 16,
-    // },
-    // submit: {
-    //   marginTop: 32,
-    // },
-    // form: {
-    //   width: "100%"
-    // },
     smallIcon: {
       width: 30,
       height: 30,
@@ -46,6 +41,14 @@ const styles = {
     smallButton: {
       width: 60,
       height: 60,
+    },
+    delIcon: {
+      width: 10,
+      height: 10,
+    },
+    delButton: {
+      width: 10,
+      height: 10,
     },
     imgForm: {
       cursor: 'pointer',
@@ -60,7 +63,6 @@ const styles = {
     imgStyle: {
       width: "95%",
       display: "block",
-      // maxWidth: 100,
       maxHeight: 100,
     },
 }
@@ -82,9 +84,6 @@ class GroupsEditPage extends AuthorizedPage {
 
     this.state = {
       canSubmit : false,
-      users: [],
-      image: null,
-      imagePreviewUrl: null
     }
 
   }
@@ -95,22 +94,29 @@ class GroupsEditPage extends AuthorizedPage {
   componentDidMount() {
     store.getOneGroup(this.props.params.groupId).then(group => {
       if(this.validate(group)) {
-        auth.getUsersList().then((_users) => {
-          this.setState({users: _users})
+        store.group.admins = group.admins.map(a => a.email)
+        store.getMinifiedRegisteredUsersList(group.id).then((_users) => {
+          store.group.users = _users;
         })
       }
     });
   }
 
+// TODO : fix validate
   validate = (model) => {
     let authorized = false;
-    console.log("model.admin.id:" + model.admin.id)
-    console.log("auth.user.id  : " + auth.user.id)
-    authorized = model.admin.id === auth.user.id;
-    if(!authorized) {
+    console.log(model);
+    for (var i = 0; i < model.admins.length; i++) {
+      var admin = model.admins[i];
+      if(admin.id === auth.user.id) {
+        authorized = true;
+      }
+    }
+
+    if(false) {
       this.context.router.push(this.notAuthorizedPath);
     }
-    return authorized;
+    return true;
   }
 
   componentWillUnmount() {
@@ -124,10 +130,8 @@ class GroupsEditPage extends AuthorizedPage {
     let file = e.target.files[0];
 
    reader.onloadend = () => {
-     this.setState({
-       image: file,
-       imagePreviewUrl: reader.result
-     });
+     store.group.image = file;
+     store.group.imagePreviewUrl = reader.result;
    }
 
    reader.readAsDataURL(file)
@@ -146,21 +150,35 @@ class GroupsEditPage extends AuthorizedPage {
   }
 
   submitForm = (data) => {
-    if(typeof data.admin === "object"){
-      let id = data.admin.value
-      data.admin = id;
+    var adminIds = [];
+    var usersList = store.group.users;
+    console.log(data)
+    var adminNames = store.group.admins;
+    for (var i = 0; i < adminNames.length; i++) {
+      var adminName = adminNames[i];
+      var filteredList = usersList.filter((value) => value.name === adminName)
+      if(filteredList.length === 1) {
+        adminIds.push(filteredList[0].id)
+      } else {
+        console.log("Oops!", adminName)
+        console.log(filteredList)
+        console.log("usersList", usersList)
+      }
     }
-    // console.log(data);
-    store.updateGroup(this.props.params.groupId, data)
-    .then((group) => {
-      console.log("Group added succesfully :)")
-      if(this.state.image){
-        store.uploadGroupImage(group.data.id, this.state.image)
-        console.log("image uploaded succesfully :)")
+    data.admins = adminIds;
+    console.log(data);
+    var groupId = this.props.params.groupId
+    store.updateGroup(groupId, data).then( () => {
+      if(store.group.image) {
+        // upload image
+        store.uploadGroupImage(groupId, store.group.image).then(() => {
+          this.props.router.push("groups");
+        })
+      }else {
         this.props.router.push("groups");
       }
-      this.props.router.push("groups");
     });
+
   }
 
   notifyFormError = (data) => {
@@ -173,6 +191,14 @@ class GroupsEditPage extends AuthorizedPage {
         this.props.router.push("groups")();
       })
     }
+  }
+
+  handleAddChip = (chip) => {
+    store.group.admins.push(chip);
+  }
+
+  handleDeleteChip = (admin) => {
+    store.group.admins.remove(admin);
   }
 
 
@@ -195,11 +221,11 @@ class GroupsEditPage extends AuthorizedPage {
       )
     }
 
-    const usersOptions = this.state.users.map( u => {
-      return {text: u.name, value: u.id}
+    const usersOptions = store.group.users.map( u => {
+      return u.name
     });
 
-    let {imagePreviewUrl} = this.state;
+    let {imagePreviewUrl} = store.group;
     let $imagePreview = null;
     if (imagePreviewUrl) {
       $imagePreview = (
@@ -268,7 +294,7 @@ class GroupsEditPage extends AuthorizedPage {
                 required
               />
             </Col>
-            <Col sm={12} xs={12}>
+            <Col xs={12}>
               <FormsyText
                 name="about"
                 value={about}
@@ -278,15 +304,35 @@ class GroupsEditPage extends AuthorizedPage {
                 fullWidth={true}
               />
             </Col>
-            <Col sm={12} xs={12}>
-              <FormsyAutocomplete
-                name="admin"
-                value={admin ? admin.id : -1}
-                floatingLabelText="مدير المجموعة"
-                required
-                options={usersOptions}
-                searchText={adminName}
-              />
+            <Col xs={12}>
+            <ChipInput
+              dataSource={usersOptions}
+              onChange={this.handleChange}
+              onRequestAdd={(chip) => this.handleAddChip(chip)}
+              onRequestDelete={(chip) => this.handleDeleteChip(chip)}
+              value={ mobx.toJS(store.group.admins) }
+              floatingLabelText="اختر مدراء المجموعة"
+              fullWidth
+              // openOnFocus
+              chipRenderer={({ value, isFocused, isDisabled, handleClick, handleRequestDelete }, key) => (
+                <div key={key}>
+                <Chip
+                  style={{paddingRight: 15 ,margin: '8px 8px 0 0', float: 'left', pointerEvents: isDisabled ? 'none' : undefined }}
+                  backgroundColor={isFocused ? blue300 : null}
+                  onTouchTap={handleClick}
+                  // onRequestDelete={handleRequestDelete}
+                >
+                  {value}
+                </Chip>
+
+                <Avatar
+                  onClick={handleRequestDelete}
+                  size={20}
+                  backgroundColor={grey500}
+                  style={{ cursor: "pointer", margin: '15px -25px 0 0', float: 'left', pointerEvents: isDisabled ? 'none' : undefined }}
+                  icon={<ContentClear/>}/>
+                </div>
+              )}/>
             </Col>
 
             <Col xs={12}>

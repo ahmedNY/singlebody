@@ -14,7 +14,7 @@ module.exports = {
     },
     about: "STRING",
     admins: {
-      Collection: 'auth',
+      collection: 'Auth',
       via: "group"
     },
     imageUrl: 'STRING',
