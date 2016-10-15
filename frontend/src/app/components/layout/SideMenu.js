@@ -14,6 +14,8 @@ import ActionUrgent from 'material-ui/svg-icons/action/hourglass-empty';
 import Avatar from 'material-ui/Avatar';
 import AuthorizedComponent from "../AuthorizedComponent";
 
+import auth from "../../stores/AuthStore";
+
 @observer
 export default class SideMenu extends React.Component {
 
@@ -54,6 +56,12 @@ export default class SideMenu extends React.Component {
             <MenuItem onClick={this.close}
             leftIcon={<SocialGroup />}
             href="#/groups">االمجموعات</MenuItem>
+          </AuthorizedComponent>
+
+          <AuthorizedComponent allowedRoles={["groupAdmin"]}>
+            <MenuItem onClick={this.close}
+            leftIcon={<SocialGroup />}
+            href={"#/groups/edit/" + auth.user.group}>اعدادت المجموعة</MenuItem>
           </AuthorizedComponent>
 
         </Drawer>

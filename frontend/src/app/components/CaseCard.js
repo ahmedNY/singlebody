@@ -9,7 +9,7 @@ import config from "../config";
 const {Row, Col} = require('react-flexbox-grid');
 
 const cardStyle = {
-    marginTop: "15px"
+    marginTop: 15
 }
 
 const titleStyle = {
@@ -17,16 +17,16 @@ const titleStyle = {
 }
 
 const summaryStyle = {
-  height: "30px",
+  height: 30,
 }
 
 const imageStyle = {
   maxHeight: "100%",
   maxWidth: "100%",
-  marginTop: "-20px",
-  marginRight: "0px",
-  marginBottom: "0px",
-  marginLeft: "0px",
+  marginTop: -20,
+  marginRight: 0,
+  marginBottom: 0,
+  marginLeft: 0,
 }
 
 const imgContainer = {
@@ -41,7 +41,13 @@ export default class CaseCard extends Component {
 
     const { id, title, summary, city, section,
       moneyRaised, moneyRequired, daysRemaining, group , imageUrl} = this.props.caseModel
-  const moneyRaisedPer = Math.round( (moneyRaised / moneyRequired) * 100 )
+
+    let moneyRaisedPer = 0;
+    // fix some random error!
+    if(moneyRaised > 0){
+      moneyRaisedPer = Math.round( (moneyRaised / moneyRequired) * 100 )
+    }
+
 
     return(
         <Card style={cardStyle}>

@@ -7,6 +7,7 @@ import FloatingButton from "../components/FloatingButton";
 import ContentAddIcon from 'material-ui/svg-icons/content/add';
 import store from "../stores/CasesStore";
 import auth from "../stores/AuthStore";
+import AuthorizedComponent from "../components/AuthorizedComponent";
 
 @observer
 export default class CasePage extends Component {
@@ -33,12 +34,11 @@ export default class CasePage extends Component {
                     {cases}
                 </Row>
 
-                <FloatingButton
-                  index={1}
-                  href={"#/cases/addcase"}
-                  allowedRoles={["groupAdmin"]}>
+                <AuthorizedComponent allowedRoles={["groupAdmin"]}>
+                  <FloatingButton index={1} href={"#/cases/addcase"}>
                     <ContentAddIcon/>
-                </FloatingButton>
+                  </FloatingButton>
+                </AuthorizedComponent>
 
             </div>
         );

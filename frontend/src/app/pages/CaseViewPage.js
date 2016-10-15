@@ -25,6 +25,9 @@ import ContentAddIcon from 'material-ui/svg-icons/content/add';
 import auth from "../stores/AuthStore";
 import config from "../config";
 
+import AuthorizedComponent from "../components/AuthorizedComponent";
+
+
 
 const paperStyle = {
   backgroundColor: grey100
@@ -94,6 +97,8 @@ class CaseViewPage extends Component {
     constructor(props) {
       super(props)
       this.handleDeleteButton = this.handleDeleteButton.bind(this)
+      this.model = "Case"
+      this.action = "read"
     }
 
     componentDidMount () {
@@ -130,7 +135,7 @@ class CaseViewPage extends Component {
   render() {
 
     const { id, title, summary, city, section, moneyRaised, moneyRequired,
-        daysRemaining, donorsCount, story, owner, group, category, imageUrl } = store.currentCase
+        daysRemaining, donorsCount, story, group, category, imageUrl } = store.currentCase
     const moneyRaisedPer = Math.round( (moneyRaised / moneyRequired) * 100 );
     const isLoading = store.isLoading
 
@@ -236,15 +241,23 @@ class CaseViewPage extends Component {
 
 
         <div>
-          <FloatingButton allowedRoles={["groupAdmin"]} index={1} href={"#/cases/addcase"}>
-            <ContentAddIcon/>
-          </FloatingButton>
-          <FloatingButton owner={owner} allowedRoles={["groupAdmin"]} index={2} href={"#/cases/edit/" + id} backgroundColor={orange500}>
-            <ModeEditIcon/>
-          </FloatingButton>
-          <FloatingButton owner={owner} allowedRoles={["groupAdmin"]} index={3} onClick={this.handleDeleteButton.bind(this)} backgroundColor={red500}>
-            <DeleteIcon/>
-          </FloatingButton>
+          <AuthorizedComponent allowedRoles={["groupAdmin"]}>
+            <FloatingButton index={1} href={"#/cases/addcase"}>
+              <ContentAddIcon/>
+            </FloatingButton>
+          </AuthorizedComponent>
+
+          <AuthorizedComponent allowedRoles={["groupAdmin"]} action="update" model={this.model} dataModel={store.currentCase}>
+            <FloatingButton index={2} href={"#/cases/edit/" + id} backgroundColor={orange500}>
+              <ModeEditIcon/>
+            </FloatingButton>
+          </AuthorizedComponent>
+
+          <AuthorizedComponent allowedRoles={["groupAdmin"]} action="delete" model={this.model} dataModel={store.currentCase}>
+            <FloatingButton allowedRoles={["groupAdmin"]} index={3} onClick={this.handleDeleteButton.bind(this)} backgroundColor={red500}>
+              <DeleteIcon/>
+            </FloatingButton>
+          </AuthorizedComponent>
         </div>
 
         </div>

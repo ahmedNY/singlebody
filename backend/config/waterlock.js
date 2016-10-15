@@ -47,7 +47,7 @@ module.exports.waterlock = {
           vars:{}
         }
       },
-      createOnNotFound: true
+      createOnNotFound: false
     },
     {
         name: "waterlock-facebook-auth",

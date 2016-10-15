@@ -85,38 +85,30 @@ class GroupsEditPage extends AuthorizedPage {
     this.state = {
       canSubmit : false,
     }
-
+    // authorization
+    this.model = "Group";
+    this.action = "update";
   }
   componentWillMount() {
     uiStore.mainHeaderVisible = false
   }
 
+  // auth
+  authByGroup = (userGroupId) => {
+    var isOk = userGroupId === store.currentGroup.id
+    console.log("Custom authorizeion used", isOk);
+    return isOk;
+  }
+
   componentDidMount() {
     store.getOneGroup(this.props.params.groupId).then(group => {
-      if(this.validate(group)) {
+      if(this.check(group)) {
         store.group.admins = group.admins.map(a => a.email)
         store.getMinifiedRegisteredUsersList(group.id).then((_users) => {
           store.group.users = _users;
         })
       }
     });
-  }
-
-// TODO : fix validate
-  validate = (model) => {
-    let authorized = false;
-    console.log(model);
-    for (var i = 0; i < model.admins.length; i++) {
-      var admin = model.admins[i];
-      if(admin.id === auth.user.id) {
-        authorized = true;
-      }
-    }
-
-    if(false) {
-      this.context.router.push(this.notAuthorizedPath);
-    }
-    return true;
   }
 
   componentWillUnmount() {

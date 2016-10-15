@@ -1,9 +1,5 @@
-import React, { Component, PropTypes} from 'react';
-import { observer } from 'mobx-react';
+import React, { Component} from 'react';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
-import { RoleAwareComponent } from 'react-router-role-authorization';
-
-import auth from '../stores/AuthStore'
 
 
 function fabStyle (index=1) {
@@ -18,42 +14,17 @@ function fabStyle (index=1) {
   }
 };
 
-@observer
-class FloatingButton extends RoleAwareComponent {
-  constructor(props) {
-    super(props);
-
-    // Authenticatoin
-    this.allowedRoles = this.props.allowedRoles;
-    this.userRoles = [];
-    this.owned = true;
-  }
+class FloatingButton extends Component {
 
   render() {
-    if(auth.user){
-      this.userRoles = auth.user.roles;
-      if(this.props.owner !== undefined){
-        this.owned = this.props.owner == auth.user.id;
-      }
-    }else {
-      this.userRoles = []
-    }
-
     const {index, href, children, onClick, backgroundColor} = this.props
-    const jsx = (
+    return (
       <div>
         <FloatingActionButton style={fabStyle(index)} backgroundColor={backgroundColor} onClick={onClick}  href={href}>
           {children}
         </FloatingActionButton>
       </div>
     );
-
-    return (this.rolesMatched() && this.owned) ? jsx : null;
   }
 }
-
-FloatingButton.propTypes = {
-  allowedRoles: PropTypes.array
-}
-
 export default FloatingButton;

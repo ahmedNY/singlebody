@@ -85,13 +85,16 @@ class CaseEditorPage extends AuthorizedPage {
       this.updateEditMode = this.updateEditMode.bind(this)
       this.submitForm = this.submitForm.bind(this)
       this.isEditingMode = false;
+
+      this.model = "Case"
    }
 
    updateEditMode = () => {
     this.isEditingMode = !this.props.router.isActive("/cases/addcase");
    // or
    // this.isEditingMode = this.props.location.pathname.match(/^\/cases\/edit/) != null
-      console.log("isEditingMode:" + this.state.isEditingMode)
+    this.action = this.isEditingMode ? "update" : "create"
+    console.log("isEditingMode:" + this.state.isEditingMode)
     this.render()
 
    }
@@ -125,12 +128,12 @@ class CaseEditorPage extends AuthorizedPage {
 
     //we need to fetch case before editing it
     fetchSingleCase = () => {
-      this.fetchLists();
-      let me = this;
        store.getCase(this.props.params.caseId)
          .then(response => {
-             this.check(response.data);
-             store.formCase = response.data;
+             if(this.check(response.data)){
+               this.fetchLists();
+               store.formCase = response.data;
+             }
          });
     }
     //
