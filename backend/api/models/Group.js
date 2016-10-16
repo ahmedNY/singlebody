@@ -6,7 +6,7 @@
  */
 
 module.exports = {
-
+  autoCreatedBy: false,
   attributes: {
     name: {
       type: "STRING",

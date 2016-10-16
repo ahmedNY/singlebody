@@ -15,6 +15,14 @@ module.exports = {
     lastName: 'string',
     fullName: 'string',
 
+    group: {
+      model: "Group"
+    },
+    
+    createdBy: {
+      model: "Auth"
+    },
+
     roles: {
       collection: 'Role',
       via: 'users',
@@ -31,9 +39,6 @@ module.exports = {
       via: "owner"
     },
 
-    group: {
-      model: "Group"
-    },
 
   }),
 

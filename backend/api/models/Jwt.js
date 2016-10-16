@@ -7,12 +7,13 @@
  */
 
 module.exports = {
+  autoCreatedBy: false,
 
   attributes: require('waterlock').models.jwt.attributes({
-    
+
     /* e.g.
     nickname: 'string'
     */
-    
+
   })
 };

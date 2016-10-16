@@ -13,7 +13,11 @@ class AuthStore {
     visible : false,
     username: "",
     password: "",
-    type: "local"
+    confirmPassword: "",
+    type: "local",
+    isRegister: false,
+    notMatchedPasswordMessage: null,
+    isValidForm: false,
   }
 
   @computed get isLogedIn() {
@@ -24,8 +28,9 @@ class AuthStore {
     this.loginModel.visible = true;
   }
 
-  login(username, password) {
-    return ApiHelper.post("auths/login", {
+  loginRegister(username, password) {
+    var action = this.loginModel.isRegister ? "register" : "login";
+    return ApiHelper.post("auths/" + action, {
       email: username,
       password: password,
       type: "local",
@@ -69,11 +74,6 @@ class AuthStore {
       console.log("loged out...");
       return response;
     });
-  }
-
-  test() {
-    // ApiHelper.get("tests/open")
-    return ApiHelper.get("tests/jwt", true)
   }
 
   getUserToken = () => {

@@ -25,8 +25,8 @@ export default class LoginDialog extends React.Component {
     auth.loginModel.visible = false
   };
 
-  login = () => {
-    auth.login(auth.loginModel.username, auth.loginModel.password).then(()=>{
+  loginRegister = () => {
+    auth.loginRegister(auth.loginModel.username, auth.loginModel.password).then(()=>{
       auth.loginModel.visible = false;
     });
   }
@@ -36,17 +36,18 @@ export default class LoginDialog extends React.Component {
   }
 
   render() {
+    const { isRegister } = auth.loginModel;
     const actions = [
       <FlatButton
-        label="تسجيل الدخول"
+        label={isRegister ? "اشترك" :"تسجيل الدخول"}
         primary={true}
-        onTouchTap={this.login}
+        onTouchTap={this.loginRegister}
       />,
       <FlatButton
-        label="تسجيل الدخول بالفيسبوك"
+        label={isRegister ? "اشتراك بالفيسبوك" : "تسجيل الدخول بالفيسبوك"}
         primary={true}
         onTouchTap={this.loginWithFacebook}
-      />,
+      />
     ];
 
     return (

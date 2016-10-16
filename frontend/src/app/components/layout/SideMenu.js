@@ -27,6 +27,10 @@ export default class SideMenu extends React.Component {
     uiStore.sideMenuVisible = false;
   }
   render() {
+    let userGroupId;
+    if(auth.user) {
+      userGroupId = auth.user.group;
+    }
     return (
       <div>
         <Drawer
@@ -61,7 +65,7 @@ export default class SideMenu extends React.Component {
           <AuthorizedComponent allowedRoles={["groupAdmin"]}>
             <MenuItem onClick={this.close}
             leftIcon={<SocialGroup />}
-            href={"#/groups/edit/" + auth.user.group}>اعدادت المجموعة</MenuItem>
+            href={"#/groups/edit/" + userGroupId}>اعدادت المجموعة</MenuItem>
           </AuthorizedComponent>
 
         </Drawer>

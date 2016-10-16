@@ -49,12 +49,11 @@ class LoginPage extends Component {
       this.state = {
           canSubmit: false,
       }
-      this.login = this.login.bind(this)
    }
 
 
-  login() {
-    auth.login(auth.loginModel.username, auth.loginModel.password).then( () => {
+  loginRegister = () => {
+    auth.loginRegister(auth.loginModel.username, auth.loginModel.password).then( () => {
       this.props.router.replace(this.props.location.state.nextPathname)
 
     });
@@ -72,7 +71,7 @@ class LoginPage extends Component {
 
   render() {
     const {paperStyle, switchStyle, submitStyle } = styles;
-    const { wordsError, numericError, urlError } =    errorMessages;
+    const { isRegister, notMatchedPasswordMessage, isValidForm} = auth.loginModel;
 
     return (
               <PaperComponent size="small">
@@ -80,15 +79,16 @@ class LoginPage extends Component {
                   <br/>
                   <Row end="xs">
                     <FlatButton
-                      label="تسجيل الدخول"
+                      label={isRegister ? "اشترك" :"تسجيل الدخول"}
                       primary={true}
-                      onTouchTap={this.login}
+                      onTouchTap={this.loginRegister}
+                      disabled={!isValidForm}
                     />
                     <FlatButton
-                      label="تسجيل الدخول بالفيسبوك"
+                      label={isRegister ? "اشتراك بالفيسبوك" : "تسجيل الدخول بالفيسبوك"}
                       primary={true}
                       onTouchTap={this.loginWithFacebook}
-                    />,
+                    />
                   </Row>
               </PaperComponent>
     );

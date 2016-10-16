@@ -10,9 +10,20 @@
 
 module.exports = require('waterlock').actions.user({
   find: function(req, res) {
-    var groupId = req.query.group;
+    var filter;
 
-    Auth.find({or: [ {group: null}, {group: groupId} ]}).then(function(users) {
+    // filter by groupid
+    var groupId = req.query.group;
+    if(groupId) {
+      filter = {
+        or: [
+          { group: groupId },
+          { group: null },
+        ]
+      }
+    }
+
+    Auth.find(filter).then(function(users) {
       return res.json(users.map(function(user) {
         return {
           id: user.id,

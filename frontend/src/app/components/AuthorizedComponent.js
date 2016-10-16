@@ -26,56 +26,60 @@ class AuthorizedComponent extends RoleAwareComponent {
       return true;
     }
     if(!dataModel.id) {
+      console.log("datamodel not provided");
       return false;
     }
+
     let authorized = false;
     // get the model permissions
     const modelPermissions = toJS(auth.user.permissions).find( p => p.model === model);
 
     if(modelPermissions.role) {
+      console.log("Checking role permission")
       // role permission
-      for (let i = 0; i < modelPermissions.role.length; i++) {
-        const allowedActions = modelPermissions.role[i];
-        if(allowedActions.indexOf(action) > -1) {
-          authorized = true;
-          console.log(auth.user.email + " has role permission to " + action + " " + model)
-        }
+      let modelAction = modelPermissions.role.find( a => a === action);
+      authorized = ((modelAction !== null) && (modelAction !== undefined));
+      if(authorized) {
+        console.log("permitted by role")
+        return authorized;
       }
     }
 
     // group permission
     if(modelPermissions.group) {
       console.log("Checking group permission")
-      for (let i = 0; i < modelPermissions.group.length; i++) {
-        const allowedActions = modelPermissions.group[i];
-        if(allowedActions.indexOf(action) > -1) {
+      let modelAction = modelPermissions.group
+        .find( a => a === action);
+      // custom authentication avilable
+      if(modelAction) {
           // check the user has the access to object group
           authorized = auth.user.group === dataModel.group.id;
-          console.log("auth.user.group", auth.user.group)
-          console.log("dataModel.group", dataModel.group.id)
-          console.log(auth.user.email + " has group permission to " + action + " " + model)
-        }
+          if(authorized) {
+            console.log(auth.user.email + " has group permission to " + action + " " + this.model)
+            return authorized;
+          }
       }
     }
     // owner permission
     if(modelPermissions.owner) {
-      for (let i = 0; i < modelPermissions.owner.length; i++) {
-        const allowedActions = modelPermissions.owner[i];
-        if(allowedActions.indexOf(action) > -1) {
-          // check the user is an owner of object
-          authorized = auth.user.id === dataModel.owner;
-          console.log(auth.user.email + " has owner permission to " + action + " " + model)
+      let modelAction = modelPermissions.owner.find( a => a === action);
+      if(modelAction){
+        authorized = auth.user.id === dataModel.owner;
+        if(authorized) {
+          console.log(auth.user.email + " has owner permission to " + action + " " + this.model)
+          return authorized;
         }
       }
     }
+
     // user permission
     if(modelPermissions.user) {
-      for (let i = 0; i < modelPermissions.user.length; i++) {
-        const allowedActions = modelPermissions.user[i];
-        if(allowedActions.indexOf(action) > -1) {
-          // check the user has the access to object group
-          authorized = true;
-          console.log(auth.user.email + " has user permission to " + action + " " + model)
+      let modelAction = modelPermissions.user.find( a => a === action);
+      if(modelAction){
+        authorized = true;
+        if(authorized) {
+          console.log(auth.user.email + " has user permission to " + action + " " + this.model)
+          return authorized;
         }
       }
     }

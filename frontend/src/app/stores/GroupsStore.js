@@ -60,6 +60,7 @@ class GroupsStore {
     this.group.groupAdmins = [];
     this.group.image = null;
     this.group.imagePreviewUrl = null;
+    this.group.admins = [];
   }
 
   getMinifiedRegisteredUsersList = (groupId) => {

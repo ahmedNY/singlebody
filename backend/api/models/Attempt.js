@@ -7,12 +7,12 @@
  */
 
 module.exports = {
-
+  autoCreatedBy: false,
   attributes: require('waterlock').models.attempt.attributes({
-    
+
     /* e.g.
     nickname: 'string'
     */
-    
+
   })
 };

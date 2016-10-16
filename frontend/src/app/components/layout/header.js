@@ -28,10 +28,6 @@ class Header extends Component {
     auth.openLoginDialog()
   }
 
-  testAuth = () => {
-    auth.test()
-  }
-
   toggleSideMenu = () => {
     uiStore.sideMenuVisible = true;
     console.log('Opnening sidne mdoe')
@@ -54,10 +50,8 @@ class Header extends Component {
             targetOrigin={{horizontal: 'right', vertical: 'top'}}
             anchorOrigin={{horizontal: 'right', vertical: 'top'}}
             >
-            <MenuItem primaryText="انعاش" />
-            <MenuItem primaryText="مساعده" />
-            <MenuItem onClick={this.testAuth.bind(this)}primaryText="test" />
             {!isLogedIn ? <MenuItem onClick={this.handleLogin.bind(this)} primaryText="تسجيل الدخول" /> : null}
+            { isLogedIn ? <MenuItem href={"#/user/" + auth.user.id} primaryText={auth.user.name || auth.user.email} /> : null}
             { isLogedIn ? <MenuItem onClick={this.handleLogout.bind(this)} primaryText="تسجيل خروج" /> : null}
             </IconMenu>
           }

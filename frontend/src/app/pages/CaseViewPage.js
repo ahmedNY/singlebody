@@ -254,7 +254,7 @@ class CaseViewPage extends Component {
           </AuthorizedComponent>
 
           <AuthorizedComponent allowedRoles={["groupAdmin"]} action="delete" model={this.model} dataModel={store.currentCase}>
-            <FloatingButton allowedRoles={["groupAdmin"]} index={3} onClick={this.handleDeleteButton.bind(this)} backgroundColor={red500}>
+            <FloatingButton index={3} onClick={this.handleDeleteButton.bind(this)} backgroundColor={red500}>
               <DeleteIcon/>
             </FloatingButton>
           </AuthorizedComponent>

@@ -8,8 +8,9 @@
 
 module.exports = {
 
-  attributes: require('waterlock').models.user.attributes({
+  autoCreatedBy: false,
 
+  attributes: require('waterlock').models.user.attributes({
     /* e.g.
     nickname: 'string'
     */

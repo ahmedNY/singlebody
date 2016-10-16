@@ -6,7 +6,7 @@
  */
 
 module.exports = {
-
+  autoCreatedBy: false,
   attributes: {
     amount: "integer",
     paymentType: "string",

@@ -23,7 +23,7 @@ module.exports = require('waterlock').waterlocked({
       var roles = auth.roles.map(function(role){return role.name});
       result.roles = roles;
       var rolesIds = auth.roles.map(function(role){return role.id});
-      return Permission.find({or:[{role: rolesIds}, {user: auth.id}]}).populate("model")
+      return Permission.find({where:{or:[{role: rolesIds}, {user: auth.id}]}, sort: "model"}).populate("model")
     }).then(function(perms){
       // result.perms = perms
       var permissions = perms.map(function(perm){
