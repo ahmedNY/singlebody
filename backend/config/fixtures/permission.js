@@ -1,53 +1,5 @@
 var _ = require('lodash');
 
-var grants = {
-  admin: [
-    { action: 'create' },
-    { action: 'read' },
-    { action: 'update' },
-    { action: 'delete' }
-  ],
-  groupAdmin: [
-    { action: 'create' },
-    { action: 'read' },
-    { action: 'update' },
-    { action: 'delete' },
-  ],
-  registered: [
-    { action: 'create' },
-    { action: 'read' },
-    { action: 'update' },
-    { action: 'delete' },
-  ],
-  public: [
-    { action: 'read' }
-  ]
-};
-
-var modelRestrictions = {
-  groupAdmin: [
-    'Donation',
-    'Group',
-    'Case',
-    'Role',
-    'Permission',
-    'User',
-  ],
-  registered: [
-    'Donation',
-    'Group',
-    'Case',
-    'Role',
-    'Permission',
-    'User',
-  ],
-  public: [
-    'Role',
-    'Permission',
-    'User',
-    'Model',
-  ]
-};
 
 // TODO let users override this in the actual model definition
 
@@ -66,50 +18,46 @@ exports.create = function (roles, models, admin, config) {
   });
 };
 
+
+
 function grantAdminPermissions (roles, models, admin, config) {
   var adminRole = _.find(roles, { name: 'admin' });
-  var permissions = _.flatten(_.map(models, function (modelEntity) {
-    //var model = sails.models[modelEntity.identity];
-    grants.admin = _.get(config, 'grants.admin') || grants.admin;
 
-    return _.map(grants.admin, function (permission) {
-      var newPermission = {
-        model: modelEntity.id,
-        action: permission.action,
-        role: adminRole.id,
-      };
-      return sails.models.permission.findOrCreate(newPermission, newPermission);
-    });
-  }));
+  var permissions = [
+    // Group
+    {
+      model: _.find(models, { name: 'Group' }).id,
+      action: 'read',
+      role: adminRole.id
+    },
+    {
+      model: _.find(models, { name: 'Group' }).id,
+      action: 'create',
+      role: adminRole.id
+    },
+    {
+      model: _.find(models, { name: 'Group' }).id,
+      action: 'update',
+      role: adminRole.id
+    },
+    {
+      model: _.find(models, { name: 'Group' }).id,
+      action: 'delete',
+      role: adminRole.id
+    },
+  ];
 
-  return Promise.all(permissions);
+  return Promise.all(
+    permissions.map(function(permission) {
+      return sails.models.permission.findOrCreate(permission, permission);
+    })
+  );
 }
 
 function grantRegisteredPermissions (roles, models, admin, config) {
   var registeredRole = _.find(roles, { name: 'registered' });
-  var basePermissions = [
-    {
-      model: _.find(models, { name: 'Permission' }).id,
-      action: 'read',
-      role: registeredRole.id
-    },
-    {
-      model: _.find(models, { name: 'Model' }).id,
-      action: 'read',
-      role: registeredRole.id
-    },
-    {
-      model: _.find(models, { name: 'User' }).id,
-      action: 'update',
-      role: registeredRole.id,
-      relation: 'owner'
-    },
-    {
-      model: _.find(models, { name: 'User' }).id,
-      action: 'read',
-      role: registeredRole.id,
-      relation: 'owner'
-    },
+  var permissions = [
+    // Donation model
     {
       model: _.find(models, { name: 'Donation' }).id,
       action: 'create',
@@ -131,40 +79,12 @@ function grantRegisteredPermissions (roles, models, admin, config) {
       model: _.find(models, { name: 'Donation' }).id,
       action: 'read',
       role: registeredRole.id,
-      relation: 'owner'
-    },
-    {
-      model: _.find(models, { name: 'Case' }).id,
-      action: 'read',
-      role: registeredRole.id,
-    },
-    {
-      model: _.find(models, { name: 'Group' }).id,
-      action: 'read',
-      role: registeredRole.id,
+      relation: 'role'
     }
   ];
 
-  // XXX copy/paste from above. terrible. improve.
-  var permittedModels = _.filter(models, function (model) {
-    return !_.contains(modelRestrictions.registered, model.name);
-  });
-  var grantPermissions = _.flatten(_.map(permittedModels, function (modelEntity) {
-
-    grants.registered = _.get(config, 'grants.registered') || grants.registered;
-
-    return _.map(grants.registered, function (permission) {
-      return {
-        model: modelEntity.id,
-        action: permission.action,
-        role: registeredRole.id,
-      };
-    });
-  }));
-
-
   return Promise.all(
-    basePermissions.concat(grantPermissions).map(function(permission) {
+    permissions.map(function(permission) {
       return sails.models.permission.findOrCreate(permission, permission);
     })
   );
@@ -172,74 +92,33 @@ function grantRegisteredPermissions (roles, models, admin, config) {
 
 function grantGroupAdminPermissions (roles, models, admin, config) {
   var groupAdminRole = _.find(roles, { name: 'groupAdmin' });
-  var basePermissions = [
-    {
-      model: _.find(models, { name: 'Permission' }).id,
-      action: 'read',
-      role: groupAdminRole.id
-    },
-    {
-      model: _.find(models, { name: 'Model' }).id,
-      action: 'read',
-      role: groupAdminRole.id
-    },
-    {
-      model: _.find(models, { name: 'User' }).id,
-      action: 'update',
-      role: groupAdminRole.id,
-      relation: 'owner'
-    },
-    {
-      model: _.find(models, { name: 'User' }).id,
-      action: 'read',
-      role: groupAdminRole.id,
-      relation: 'owner'
-    },
-    {
-      model: _.find(models, { name: 'Group' }).id,
-      action: 'read',
-      role: groupAdminRole.id,
-    },
+  var permissions = [
+    // Group model
     {
       model: _.find(models, { name: 'Group' }).id,
       action: 'update',
       role: groupAdminRole.id,
-      relation: 'owner'
+      relation: 'group'
     },
-    {
-      model: _.find(models, { name: 'Case' }).id,
-      action: 'read',
-      role: groupAdminRole.id,
-    },
-    {
-      model: _.find(models, { name: 'Case' }).id,
-      action: 'update',
-      role: groupAdminRole.id,
-      relation: 'owner'
-    },
-    {
-      model: _.find(models, { name: 'Case' }).id,
-      action: 'delete',
-      role: groupAdminRole.id,
-      relation: 'owner'
-    },
+    // Case model
     {
       model: _.find(models, { name: 'Case' }).id,
       action: 'create',
       role: groupAdminRole.id,
     },
     {
-      model: _.find(models, { name: 'Donation' }).id,
-      action: 'delete',
-      role: groupAdminRole.id,
-      relation: 'owner'
-    },
-    {
-      model: _.find(models, { name: 'Donation' }).id,
+      model: _.find(models, { name: 'Case' }).id,
       action: 'update',
       role: groupAdminRole.id,
-      relation: 'owner'
+      relation: 'group'
     },
+    {
+      model: _.find(models, { name: 'Case' }).id,
+      action: 'delete',
+      role: groupAdminRole.id,
+      relation: 'group'
+    },
+    // Donation model
     {
       model: _.find(models, { name: 'Donation' }).id,
       action: 'read',
@@ -250,29 +129,23 @@ function grantGroupAdminPermissions (roles, models, admin, config) {
       model: _.find(models, { name: 'Donation' }).id,
       action: 'create',
       role: groupAdminRole.id,
+    },
+    {
+      model: _.find(models, { name: 'Donation' }).id,
+      action: 'update',
+      role: groupAdminRole.id,
+      relation: 'owner'
+    },
+    {
+      model: _.find(models, { name: 'Donation' }).id,
+      action: 'delete',
+      role: groupAdminRole.id,
+      relation: 'owner'
     },
   ];
 
-  // XXX copy/paste from above. terrible. improve.
-  var permittedModels = _.filter(models, function (model) {
-    return !_.contains(modelRestrictions.registered, model.name);
-  });
-  var grantPermissions = _.flatten(_.map(permittedModels, function (modelEntity) {
-
-    grants.registered = _.get(config, 'grants.registered') || grants.registered;
-
-    return _.map(grants.registered, function (permission) {
-      return {
-        model: modelEntity.id,
-        action: permission.action,
-        role: groupAdminRole.id,
-      };
-    });
-  }));
-
-
   return Promise.all(
-    basePermissions.concat(grantPermissions).map(function(permission) {
+    permissions.map(function(permission) {
       return sails.models.permission.findOrCreate(permission, permission);
     })
   );

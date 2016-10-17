@@ -15,6 +15,7 @@ import ar from 'react-intl/locale-data/ar';
 import { Row, Col } from 'react-flexbox-grid';
 
 
+import AuthorizedPage from "./AuthorizedPage";
 import store from '../stores/DonationsStore'
 
 addLocaleData(ar);
@@ -34,10 +35,14 @@ export default class DonationsPage extends React.Component {
 
   componentDidMount () {
       // fetch data initially
-    this.fetchCases()
+    this.fetchDonations()
   }
 
-   fetchCases () {
+  componentWillUnount() {
+    store.cases.splice(0,store.cases.length);
+  }
+
+   fetchDonations () {
      console.log("Fetching donations ........")
      store.getDonations();
    }

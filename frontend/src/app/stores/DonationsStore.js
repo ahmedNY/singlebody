@@ -18,7 +18,7 @@ class DonationsStore {
     return apiHelper.get("donations", true)
       .then( response => {
         this.donatedCases = response.data;
-        return response;
+        return response.data;
       })
   }
 

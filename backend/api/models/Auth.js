@@ -18,7 +18,7 @@ module.exports = {
     group: {
       model: "Group"
     },
-    
+
     createdBy: {
       model: "Auth"
     },
@@ -39,6 +39,10 @@ module.exports = {
       via: "owner"
     },
 
+    facebookId: {
+      type: 'string',
+      unique: true
+    },
 
   }),
 

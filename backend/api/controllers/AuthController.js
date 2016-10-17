@@ -20,6 +20,7 @@ module.exports = require('waterlock').waterlocked({
       result.id = auth.id;
       result.email = auth.email;
       result.group = auth.group;
+      result.name = auth.name;
       var roles = auth.roles.map(function(role){return role.name});
       result.roles = roles;
       var rolesIds = auth.roles.map(function(role){return role.id});

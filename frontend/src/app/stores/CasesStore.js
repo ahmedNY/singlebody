@@ -32,9 +32,10 @@ class CaseStore {
 	@observable formCase = Object.assign({}, this.caseTemplate)
 
 	getCases () {
-		ApiHelper.get("cases")
+		return ApiHelper.get("cases")
 		  .then( response => {
 		    this.cases.replace(response.data)
+				return response.data;
 		  })
 	}
 

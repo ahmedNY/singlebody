@@ -28,6 +28,7 @@ export default class LoginDialog extends React.Component {
   loginRegister = () => {
     auth.loginRegister(auth.loginModel.username, auth.loginModel.password).then(()=>{
       auth.loginModel.visible = false;
+      auth.loginModel.isRegister = false;
     });
   }
 
