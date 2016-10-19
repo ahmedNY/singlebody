@@ -1,17 +1,21 @@
 Installation
 ----------
 
-#### Frontend
 ``` bash
-$ cd frontend
+$ git clone https://github.com/ahmedNY/singlebody.git
+$ cd singlebody/backend
 $ npm install
-$ npm start
+$ cd ../frontend
+$ npm install
 ```
 
-#### Backend
+### Running projects
 ``` bash
+# launching backend
 $ cd backend
-$ npm install
+$ npm start
+# launching frontend
+$ cd frontend
 $ npm start
 ```
 
