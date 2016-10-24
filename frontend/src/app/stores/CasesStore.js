@@ -1,17 +1,22 @@
-import { observable , autorun } from "mobx"
+import { observable , autorun, toJS } from "mobx"
 
 // import CaseModel from "../models/CaseModel.js"
 import ApiHelper from "../helpers/ApiHelper.js"
+import uiStore from "./UiStore.js"
 
 class CaseStore {
 
 	constructor() {
 		this.getCases = this.getCases.bind(this)
+		this.currentPage = 1;
 	}
 	@observable filter = "case1"
 	@observable cases = []
 	@observable categories = []
 	@observable cities = []
+	@observable isLoadingMore = false;
+	@observable noMoreCases = false;
+
 	caseTemplate =  {
 	  "title": "حالة فريدة",
 	  "summary": "ترميم كامل لعنبر الأطفال في مستشفي البلك ترميم كامل لعنبر الأطفال في مستشفي البلك ",
@@ -32,10 +37,26 @@ class CaseStore {
 	@observable formCase = Object.assign({}, this.caseTemplate)
 
 	getCases () {
-		return ApiHelper.get("cases")
+		return ApiHelper.get("cases?page=1&limit=10")
 		  .then( response => {
 		    this.cases.replace(response.data)
 				return response.data;
+		  })
+	}
+
+	getMoreCases () {
+		uiStore.disableLoadingUi();
+		this.isLoadingMore = true;
+		return ApiHelper.get("cases?page=" + this.currentPage++ + "&limit=10")
+		  .then( response => {
+		  	var moreCases = toJS(this.cases).concat(response.data);
+		    this.cases.replace(moreCases)
+			this.isLoadingMore = false;
+			uiStore.enableLoadingUi();
+			if(response.data.length <= 0) {
+				this.noMoreCases = true;
+			}
+			return response.data;
 		  })
 	}
 

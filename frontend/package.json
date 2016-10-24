@@ -51,7 +51,8 @@
     "react-intl": "^2.1.5",
     "react-router": "^2.7.0",
     "react-sticky": "^5.0.5",
-    "react-tap-event-plugin": "^1.0.0"
+    "react-tap-event-plugin": "^1.0.0",
+    "react-waypoint": "^4.0.2"
   },
   "bugs": {
     "url": "https://github.com/callemall/material-ui/issues"

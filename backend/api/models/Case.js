@@ -33,8 +33,10 @@ module.exports = {
 
 
   // Custom methods
-  findWithDonatinos: function(cb) {
+  findWithDonatinos: function(options, cb) {
+    console.log(options);
     Case.find()
+    .paginate({page: options.page, limit: options.limit})
     .populate("donations")
     .populate("group")
     .exec(function(err, _cases) {

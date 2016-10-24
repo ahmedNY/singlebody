@@ -6,8 +6,18 @@ import CaseCard from "../components/CaseCard";
 import FloatingButton from "../components/FloatingButton";
 import ContentAddIcon from 'material-ui/svg-icons/content/add';
 import store from "../stores/CasesStore";
+import uiStore from "../stores/UiStore";
 import auth from "../stores/AuthStore";
 import AuthorizedComponent from "../components/AuthorizedComponent";
+import Waypoint from 'react-waypoint';
+import RefreshIndicator from 'material-ui/RefreshIndicator';
+
+const style = {
+  refresh: {
+    display: 'inline-block',
+    position: 'relative',
+  },
+};
 
 @observer
 export default class CasePage extends Component {
@@ -16,7 +26,24 @@ export default class CasePage extends Component {
     }
 
     componentDidMount() {
-      store.getCases()
+      // store.getCases()
+    }
+   
+    _loadMoreItems = () => {
+        console.log("Loading more cases ...");
+        store.getMoreCases();
+    }
+
+    _renderWaypoint = () => {
+        if(store.noMoreCases) return;
+      if (!store.isLoadingMore) {
+        return (
+          <Waypoint
+            onEnter={this._loadMoreItems}
+            threshold={2.0}
+          />
+        );
+      }
     }
 
     render() {
@@ -29,10 +56,25 @@ export default class CasePage extends Component {
         });
 
         return(
-            <div style={{marginRight: 20, marginLeft: 20}}>
+            <div style={{marginRight: 20, marginLeft: 20, marginBottom: 20}}>
                 <Row >
                     {cases}
                 </Row>
+                {store.isLoadingMore ? 
+                    <Row around="xs">
+                        <Col>
+                            <RefreshIndicator
+                              size={50}
+                              left={0}
+                              top={10}
+                              loadingColor="#FF9800"
+                              status="loading"
+                              style={style.refresh}
+                            />
+                        </Col>
+                    </Row>
+                : null }
+                {this._renderWaypoint()}
 
                 <AuthorizedComponent allowedRoles={["groupAdmin"]}>
                   <FloatingButton index={1} href={"#/cases/addcase"}>
