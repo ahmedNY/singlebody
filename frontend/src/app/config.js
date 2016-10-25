@@ -1,7 +1,7 @@
 // const HOSTNAME = "localhost";
 const HOSTNAME = null;
-const PORT = "1337";
-const PREFIX = null; //"api"
+const PORT = null;
+const PREFIX = "api"; //"api"
 
 let url = null;
 

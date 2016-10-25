@@ -32,9 +32,6 @@ module.exports.routes = {
   *                                                                          *
   ***************************************************************************/
 
-  '/': {
-    view: 'homepage'
-  },
   '/auth/login-success': {
     view: 'loginSuccess'
   },

@@ -8,7 +8,7 @@
  * http://waterlock.ninja/documentation
  */
 
-var BASE_URL = "http://localhost:1337";
+var BASE_URL = "http://singlebody.sd";
 
 module.exports.waterlock = {
 
@@ -53,7 +53,7 @@ module.exports.waterlock = {
         name: "waterlock-facebook-auth",
         appId: "338408173162370",
         appSecret: "f2c817cdd65cf4db2a89a643b5b5e76a",
-        redirectUri: BASE_URL + '/auths/facebook_oauth2?type=facebook',
+        redirectUri: BASE_URL + '/api/auths/facebook_oauth2?type=facebook',
         fieldMap: {
             // <model-field>: <facebook-field>,
             'firstName': 'first_name',

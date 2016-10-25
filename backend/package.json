@@ -35,6 +35,7 @@
   "scripts": {
     "debug": "sails debug",
     "start": "sails lift --verbose",
+    "production": "NODE_ENV=production PORT=8080 sails lift ",
     "flow": "flow; test $? -eq 0 -o $? -eq 2",
     "test2": "node ./node_modules/mocha/bin/mocha test/fixtures/bootstrap.test.js test/integration/**/*.test.js",
     "test": "PORT=9999 NODE_ENV=test mocha -R spec -b --recursive"
