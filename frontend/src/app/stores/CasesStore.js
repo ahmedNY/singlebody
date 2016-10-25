@@ -58,7 +58,7 @@ class CaseStore {
 		}
 		return ApiHelper.get(url)
 		  .then( response => {
-		  	var moreCases = this.cases.concat(response.data);
+		  	var moreCases = this.keyWords.length > 0 ? response.data : this.cases.concat(response.data);
 		    this.cases.replace(moreCases)
 			this.isLoadingMore = false;
 			uiStore.enableLoadingUi();

@@ -85,7 +85,7 @@ class Header extends Component {
           />
         {uiStore.searchInputVisible ? (
           <Row around="xs" style={{backgroundColor:"#FFFFFF"}}>
-          <Col xs={12} sm={6} md={3}>
+          <Col xs={12} sm={6}>
           <TagInput
           onChange={casesStore.filterCases}
           hintText="ادخل كلمات البحث"

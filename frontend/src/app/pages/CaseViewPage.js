@@ -74,7 +74,8 @@ const chipStyle = {
 }
 
 const summaryStyle = {
-  fontSize: 18
+  fontSize: 18,
+  whiteSpace: "pre-wrap",
 }
 const gridStyle = {
   // marginLeft: 0
@@ -206,34 +207,29 @@ class CaseViewPage extends Component {
                </Tab>
                <Tab label="المستجدات" >
                  <div>
-                   <h2 style={styles.headline}>Tab Two</h2>
-                   <p>
-                     This is another example tab.
-                   </p>
+                   <h3 style={{textAlign: "center"}}>
+                     عذراً ، لا توجد اي مستجدات حالياً
+                   </h3>
                  </div>
                </Tab>
                <Tab
                  label="التعليقات"
                  data-route="/home"
-                 onActive={()=>alert('the tab is active')}
                >
                  <div>
-                   <h2 style={styles.headline}>Tab Three</h2>
-                   <p>
-                     This is a third example tab.
-                   </p>
+                   <h3 style={{textAlign: "center"}}>
+                     عذراً ، لا يوجد اي تعليق
+                   </h3>
                  </div>
                </Tab>
                <Tab
                  label="الاحصاءات"
                  data-route="/home"
-                 onActive={()=>alert('the tab is active')}
                >
                  <div>
-                   <h2 style={styles.headline}>Tab Three</h2>
-                   <p>
-                     This is a third example tab.
-                   </p>
+                   <h3 style={{textAlign: "center"}}>
+                     عذراً ، الاحصاءات ليست متوفرة حالياً
+                   </h3>
                  </div>
                </Tab>
              </Tabs>
