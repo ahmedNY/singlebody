@@ -4,48 +4,24 @@ module.exports = require('waterlock').waterlocked({
   pluralize: true,
 
   find: function(req, res) {
-    Case.find()
-    .populate("donations")
-    .populate("group")
-    .then(function(_cases) {
-      for (var i = 0; i < _cases.length; i++) {
-        _case = _cases[i];
-        _case.donorsCount = _case.donations.length
-        var sum = 0
-        for(var j = 0; j < _case.donations.length; j++) {
-          sum += _case.donations[j].amount
-        }
-        _case.moneyRaised = sum;
-        _case.donations = undefined;
-      }
-      return res.json(_cases);
-    });
+    Case.findWithDonatinos({page: req.query.page, limit: req.query.limit, keyWords:req.query.keyWords}, function(err, _cases) {
+      if(err) return res.badRequest(err);
+      return res.ok(_cases)
+    })
+  },
 
-	},
-
-	findOne: function(req, res) {
-		Case.findOne({id: req.params.id})
-    .populate("group")
-    .then(function(_case) {
-      if(!_case) return res.notFound("case not found");
-
-      Donation.find({case: req.params.id})
-      .then(function(_donations){
-        _case.donorsCount = _donations.length
-        var sum = 0
-        for(var i = 0; i < _donations.length; i++) {
-          sum += _donations[i].amount
-        }
-        _case.moneyRaised = sum;
-        return res.ok(_case);
-      })
-		});
+  findOne: function(req, res) {
+    Case.findOneWithDonatinos(req.params.id, function(err, _case) {
+      if(err) return res.badRequest(err);
+      return res.ok(_case);
+    })
 	},
 
 	create: function(req, res) {
     // get the current user
     UserService.getUser(req)
     .then(function(auth) {
+      // before create case assign user's group to case
       req.body.group = auth.group
       return Case.create(req.body);
     })
@@ -102,34 +78,34 @@ module.exports = require('waterlock').waterlocked({
     });
   },
 
+  
   image: function (req, res){
+    req.validate({
+      id: 'integer'
+    });
 
-  req.validate({
-    id: 'integer'
-  });
+    Case.findOne({id:req.params.id}).exec(function (err, _case){
+      if (err) return res.negotiate(err);
+      if (!_case) return res.notFound("case not found");
 
-  Case.findOne({id:req.params.id}).exec(function (err, _case){
-    if (err) return res.negotiate(err);
-    if (!_case) return res.notFound("case not found");
+      // User has no image uploaded.
+      // (should have never have hit this endpoint and used the default image)
+      if (!_case.imageFd) {
+        return res.notFound("no imageFd with this case!");
+      }
 
-    // User has no image uploaded.
-    // (should have never have hit this endpoint and used the default image)
-    if (!_case.imageFd) {
-      return res.notFound("no imageFd with this case!");
-    }
+      var SkipperDisk = require('skipper-disk');
+      var fileAdapter = SkipperDisk(/* optional opts */);
 
-    var SkipperDisk = require('skipper-disk');
-    var fileAdapter = SkipperDisk(/* optional opts */);
-
-    // set the filename to the same file as the file uploaded
-    res.set("Content-disposition", "attachment; filename='" + _case.imageFd + "'");
-    var uploadDir = require('path').resolve(sails.config.appPath, 'assets/images');
-    // Stream the file down
-    fileAdapter.read(uploadDir + "/" + _case.imageFd)
-    .on('error', function (err){
-      return res.serverError(err);
-    })
-    .pipe(res);
+      // set the filename to the same file as the file uploaded
+      res.set("Content-disposition", "attachment; filename='" + _case.imageFd + "'");
+      var uploadDir = require('path').resolve(sails.config.appPath, 'assets/images');
+      // Stream the file down
+      fileAdapter.read(uploadDir + "/" + _case.imageFd)
+      .on('error', function (err){
+        return res.serverError(err);
+      })
+      .pipe(res);
   });
 }
 

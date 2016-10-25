@@ -20,7 +20,6 @@ import ChipInput from 'material-ui-chip-input'
 import {blue300} from "material-ui/styles/colors"
 
 // Project
-import FormsyAutocomplete from "../components/FormsyAutocomplete";
 import PaperComponent from "../components/PaperComponent";
 import uiStore from '../stores/UiStore';
 import auth from '../stores/AuthStore';

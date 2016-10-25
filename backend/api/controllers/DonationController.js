@@ -7,24 +7,25 @@
 
 module.exports = {
 	find: function(req, res){
-		Jwt.findOne({token: req.headers.access_token}).populate("owner")
-      .then(function(jwt) {
-        // result.jwt = jwt;
-        return Auth.findOne({id: jwt.owner.auth}).populate("donations");
-    }).then(function(auth){
-			donationCases = auth.donations.map(function(d){
-				return d.case
-			})
-			Case.find({id:donationCases}).populate("donations", {owner: auth.id})
-			.then(function(_cases){
-				return res.ok(_cases)
-			})
+		Jwt.findOne({token: req.headers.access_token})
+		.populate("owner")
+		.then(function(jwt) {
+	        Auth.findOne({id: jwt.owner.auth})
+	        .populate("donations")
+	      	.then(function(auth){
+				donationCases = auth.donations.map(function(d){ return d.case });
+				Case.find({id:donationCases}).populate("donations", {owner: auth.id})
+				.then(function(_cases) {
+					return res.ok(_cases)
+				})
 
-		});
+	    	 })
+		})
 	},
 
 	findOne: function(req, res) {
-		Donation.findOne({id: req.params.id}).then(function(_dontaion) {
+		Donation.findOne({id: req.params.id})
+		.then(function(_dontaion) {
 			return res.ok(_dontaion);
 		});
 	},
@@ -58,7 +59,5 @@ module.exports = {
 			return res.ok(_donation[0]);
 		})
 	},
-	// destroy: function(req, res){
-	// 	return res.ok("Not yet implemented!")
-	// },
+	
 };

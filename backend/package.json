@@ -30,12 +30,14 @@
     "waterlock": "git+https://github.com/ahmedNY/waterlock.git",
     "waterlock-facebook-auth": "^0.1.2-rc1",
     "waterlock-google-auth": "^0.1.2-rc1",
-    "waterlock-local-auth": "^0.1.2-rc1"
+    "waterlock-local-auth": "git+https://github.com/waterlock/waterlock-local-auth.git"
   },
   "scripts": {
     "debug": "sails debug",
     "start": "sails lift --verbose",
-    "flow": "flow; test $? -eq 0 -o $? -eq 2"
+    "flow": "flow; test $? -eq 0 -o $? -eq 2",
+    "test2": "node ./node_modules/mocha/bin/mocha test/fixtures/bootstrap.test.js test/integration/**/*.test.js",
+    "test": "PORT=9999 NODE_ENV=test mocha -R spec -b --recursive"
   },
   "main": "app.js",
   "repository": {
@@ -46,7 +48,10 @@
   "license": "ISC",
   "devDependencies": {
     "flow-bin": "^0.33.0",
-    "sails-hook-autoreload": "^0.13.2"
+    "mocha": "^3.1.2",
+    "sails-hook-autoreload": "^0.13.2",
+    "sails-memory": "^0.10.7",
+    "supertest": "^2.0.1"
   },
   "bugs": {
     "url": "https://github.com/ahmed/backend/issues"
