@@ -2,8 +2,6 @@ import { observable, computed, toJS } from "mobx";
 import ApiHelper from "../helpers/ApiHelper";
 import react from 'react';
 import cookie from 'react-cookie';
-import jwtDecode from 'jwt-decode';
-import Promise from 'bluebird';
 
 class AuthStore {
 
@@ -97,8 +95,5 @@ class AuthStore {
   }
 }
 
-var store = window.store = new AuthStore;
-window.cookie = cookie
-window.jwtDecode = jwtDecode
-window.toJS = toJS
+var store = new AuthStore;
 export default store;

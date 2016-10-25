@@ -1,2 +1,5 @@
 
 backend/assets/images/*.*
+
+frontend/build/*
+backend/assets/*

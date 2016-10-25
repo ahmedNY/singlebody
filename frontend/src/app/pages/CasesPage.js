@@ -50,7 +50,7 @@ export default class CasesPage extends Component {
           console.log("rendering Waypoint ......")
           clearTimeout() 
         }
-      }, 3000);
+      }, 1000);
     }
 
     render() {
