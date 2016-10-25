@@ -20,13 +20,22 @@ const style = {
 };
 
 @observer
-export default class CasePage extends Component {
+export default class CasesPage extends Component {
     constructor() {
-        super()
+        super();
+        this.state = {showInfinteLoader: false}
     }
 
     componentDidMount() {
-      // store.getCases()
+      store.getCases().then(() => {
+        this._renderWaypoint();
+      })
+      uiStore.showSearchIcon = true;
+    }
+
+    componentWillUnmount() {
+      uiStore.showSearchIcon = false;
+      store.reset();
     }
    
     _loadMoreItems = () => {
@@ -35,15 +44,13 @@ export default class CasePage extends Component {
     }
 
     _renderWaypoint = () => {
-        if(store.noMoreCases) return;
-      if (!store.isLoadingMore) {
-        return (
-          <Waypoint
-            onEnter={this._loadMoreItems}
-            threshold={2.0}
-          />
-        );
-      }
+      setTimeout(() => {
+        if (!store.isLoadingMore && !store.noMoreCases) {
+          this.setState({showInfinteLoader: true})
+          console.log("rendering Waypoint ......")
+          clearTimeout() 
+        }
+      }, 3000);
     }
 
     render() {
@@ -74,7 +81,12 @@ export default class CasePage extends Component {
                         </Col>
                     </Row>
                 : null }
-                {this._renderWaypoint()}
+                {this.state.showInfinteLoader ? (
+                  <Waypoint
+                    onEnter={this._loadMoreItems}
+                    threshold={2.0}
+                  />
+                ) : null}
 
                 <AuthorizedComponent allowedRoles={["groupAdmin"]}>
                   <FloatingButton index={1} href={"#/cases/addcase"}>

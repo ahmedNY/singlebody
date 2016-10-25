@@ -6,6 +6,7 @@ class UiStore {
     @observable mainHeaderVisible = true
     @observable sideMenuVisible = false
     @observable isLoading = false
+    @observable showSearchIcon = false
     @observable searchInputVisible = false
 
     disableLoadingUi = () => {

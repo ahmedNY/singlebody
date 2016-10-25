@@ -4,7 +4,7 @@ module.exports = require('waterlock').waterlocked({
   pluralize: true,
 
   find: function(req, res) {
-    Case.findWithDonatinos({page: req.query.page, limit: req.query.limit}, function(err, _cases) {
+    Case.findWithDonatinos({page: req.query.page, limit: req.query.limit, keyWords:req.query.keyWords}, function(err, _cases) {
       if(err) return res.badRequest(err);
       return res.ok(_cases)
     })

@@ -8,14 +8,16 @@ class CaseStore {
 
 	constructor() {
 		this.getCases = this.getCases.bind(this)
-		this.currentPage = 1;
+		this.currentPage = 2;
+		this.keyWords = [];
 	}
 	@observable filter = "case1"
 	@observable cases = []
+	@observable unfilteredCases = []
 	@observable categories = []
 	@observable cities = []
 	@observable isLoadingMore = false;
-	@observable noMoreCases = false;
+	@observable noMoreCases = true;
 
 	caseTemplate =  {
 	  "title": "حالة فريدة",
@@ -39,21 +41,28 @@ class CaseStore {
 	getCases () {
 		return ApiHelper.get("cases?page=1&limit=10")
 		  .then( response => {
-		    this.cases.replace(response.data)
-				return response.data;
+		    this.cases.replace(response.data);
+		    this.noMoreCases = false;
+			return response.data;
 		  })
 	}
 
 	getMoreCases () {
+		if(this.noMoreCases && this.isLoadingMore) return;
 		uiStore.disableLoadingUi();
 		this.isLoadingMore = true;
-		return ApiHelper.get("cases?page=" + this.currentPage++ + "&limit=10")
+		// set page to 1 if we had keywords
+		var url = "cases?page=" +  this.currentPage++ + "&limit=10";
+		if(this.keyWords.length > 0) {
+			url = "cases?page=" + 1 + "&limit=10&keyWords=" + this.keyWords.join();
+		}
+		return ApiHelper.get(url)
 		  .then( response => {
-		  	var moreCases = toJS(this.cases).concat(response.data);
+		  	var moreCases = this.cases.concat(response.data);
 		    this.cases.replace(moreCases)
 			this.isLoadingMore = false;
 			uiStore.enableLoadingUi();
-			if(response.data.length <= 0) {
+			if(response.data.length <= 1) {
 				this.noMoreCases = true;
 			}
 			return response.data;
@@ -139,6 +148,35 @@ class CaseStore {
 				return response.data;
 			})
 		}
+	}
+	filterCases = (keyWords) => {
+		this.keyWords = keyWords;
+		if(keyWords.length <= 0) {
+			this.cases.replace(this.unfilteredCases);
+			return;
+		}
+		if(this.unfilteredCases.length === 0){
+			this.unfilteredCases = toJS(this.cases).slice(0);
+		}
+		const filteredCases = this.unfilteredCases.slice(0).filter( c => {
+			let valid = false;
+			const properties = ["story", "title", "summary", "city", "section", "category", "groupName"];
+			for (var i = 0; i < keyWords.length; i++) {
+				let keyWord = keyWords[i];
+				for (var j = 0; j < properties.length; j++) {
+					const prop = properties[j];
+					if(c[prop].indexOf(keyWord) >= 0)
+						valid = true;
+				}
+			}
+			return valid;
+		});
+		this.cases.replace(filteredCases);
+	}
+
+	reset() {
+		uiStore.searchInputVisible = false;
+		this.keyWords = 0;
 	}
 }
 
