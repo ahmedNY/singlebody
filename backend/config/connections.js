@@ -28,9 +28,9 @@ module.exports.connections = {
   * Installed by default.                                                    *
   *                                                                          *
   ***************************************************************************/
-  localDiskDb: {
-    adapter: 'sails-memory'
-  },
+  // localDiskDb: {
+  //   adapter: 'sails-memory'
+  // },
 
   test: {
     adapter: 'sails-memory'
@@ -44,13 +44,13 @@ module.exports.connections = {
   * Run: npm install sails-mysql                                             *
   *                                                                          *
   ***************************************************************************/
-  // mysqlServer: {
-  //   adapter: 'sails-mysql',
-  //   host: 'localhost',
-  //   user: 'root', //optional
-  //   password: '123', //optional
-  //   database: 'singlebody' //optional
-  // },
+  localDiskDb: {
+    adapter: 'sails-mysql',
+    host: 'localhost',
+    user: 'root', //optional
+    password: '123', //optional
+    database: 'singlebody' //optional
+  },
 
   /***************************************************************************
   *                                                                          *

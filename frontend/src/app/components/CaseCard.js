@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import LinearProgress from 'material-ui/LinearProgress';
 import LocationIcon from 'material-ui/svg-icons/communication/location-on';
-import config from "../config";
 
 
 const {Row, Col} = require('react-flexbox-grid');
@@ -34,13 +33,11 @@ const imgContainer = {
   overflow: "hidden"
 }
 
-const backendUrl = config.backendUrl();
-
 export default class CaseCard extends Component {
   render() {
 
     const { id, title, summary, city, section,
-      moneyRaised, moneyRequired, daysRemaining, group , imageUrl} = this.props.caseModel
+      moneyRaised, moneyRequired, daysRemaining, group , imageFd} = this.props.caseModel
 
     let moneyRaisedPer = 0;
     // fix some random error!
@@ -54,7 +51,7 @@ export default class CaseCard extends Component {
           <a href={"#/cases/" + id}>
             <CardMedia mediaStyle={imgContainer}>
               {/* <div style={imgContainer}> */}
-                <img src={backendUrl + imageUrl} style={imageStyle}/>
+                <img src={"../images/" + imageFd} style={imageStyle}/>
               {/* </div> */}
             </CardMedia>
           </a>

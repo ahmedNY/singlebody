@@ -1,0 +1,99 @@
+
+<style type="text/css">
+	.img-container {
+		max-height: 400px;
+		/*min-height: 400px;*/
+		overflow: hidden;
+	}
+	.img-cropped {
+		max-height: 100%;
+		max-width: 100%;
+	}
+</style>
+
+<div class="container-fluid" style="background-color: #f7f5f5">
+
+	<div>
+		<h2 class="text-center"> <%= _case.title %> </h2>
+		<p class="text-center"> <%= _case.group.name %> </p>
+
+		<div class="row">
+			<div class="col-sm-8 col-xs-12">
+				<div class="img-container">
+					<img class="img-cropped" src= <%= "/images/" + _case.imageFd %> />
+				</div>
+				<p>
+					<span class="glyphicon glyphicon-map-marker"></span>
+					<span> <%= _case.city + " ، "  +  _case.section %> </span> &nbsp&nbsp
+					<span class="badge"> <%= _case.category  %> </span>
+					<br/>
+					<br/>
+					<%= _case.summary %>
+				</p>
+			</div>
+			<div class="col-sm-4 hidden-xs ">
+				<h2> <%= _case.donorsCount %> <br/> <span class="small">متبرع</span> </h2>		
+				<h2> <%= _case.moneyRaised %>.00 جـ <br/> <span class="small">تم دفعها</span> </h2>
+				<h2> <%= _case.moneyPromised %>.00 جـ <br/> <span class="small">موعودة الدفع</span> </h2>
+				<button type="button" class="btn btn-success btn-lg btn-block">تبرع الآن</button>
+			</div>
+			<div class="col-xs-12 visible-xs-block">
+				<div class="progress" style="height: 7px; margin-bottom:5px; margin-top:5px">
+				    <!-- moneyRaise progress -->
+				    <div class="progress-bar progress-bar-success"
+				         style="width: <%= moneyRaisedPer = ((_case.moneyRaised / _case.moneyRequired) * 100) %>%">
+				    </div>
+
+				    <div class="progress-bar" role="progressbar" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100"     style="width: <%= (((_case.moneyPromised / _case.moneyRequired) * 100) + moneyRaisedPer) > 100 ? 100 - moneyRaisedPer : ((_case.moneyPromised / _case.moneyRequired) * 100) %>%">
+				    </div>
+				</div>
+				<div class="row">
+				    <div class="col-xs-4 text-center">
+				        <p><b><%= _case.donorsCount %></b><br/> <span class="small">متبرع</span></p>
+				    </div>
+				    <div class="col-xs-4 text-center">
+				        <p style="color:#5cb85c"><b> جـ <%= _case.moneyRaised %> </b><br/> <span class="small"> تم استلامها</span></p>
+				    </div>
+				    <div class="col-xs-4 text-center">
+				        <p style="color:#337ab7"><b> جـ <%= _case.moneyPromised %> </b><br/> <span class="small"> موعودة بالدفع </span> </p>
+				    </div>
+				</div>
+				<button type="button" class="btn btn-success btn-block">تبرع الآن</button>
+				<br/>
+			</div>
+		</div>
+	</div>
+	
+</div>
+
+
+<div class="container-fluid">
+	<ul class="nav nav-tabs">
+		<li class="active">
+	        <a  href="#1" data-toggle="tab">القصة</a>
+		</li>
+		<li><a href="#2" data-toggle="tab">المستجدات</a>
+		</li>
+		<li><a href="#3" data-toggle="tab">التعليقات</a>
+		</li>
+		<li><a href="#4" data-toggle="tab">الاحصاءات</a>
+		</li>
+	</ul>
+
+	<div class="tab-content" style="min-height: 200px">
+		<div class="tab-pane active" id="1">
+			<p style="white-space: pre-wrap"> <%= _case.story %> </p>
+		</div>
+		<div class="tab-pane" id="2">
+	        <h5 class="text-center">لا توجد مستجدات</h5>
+		</div>
+	    <div class="tab-pane" id="3">
+	        <h5 class="text-center">لا توجد تعليقات</h5>
+		</div>
+	    <div class="tab-pane" id="4">
+	        <h5 class="text-center">احصاءت غير متوفره</h5>
+		</div>
+	</div>
+</div>
+
+</div>

@@ -50,26 +50,34 @@ module.exports = {
         groupFilter.where.or.push({groupName: {contains: arrayKeyWords[j]}})
       }
     }
-    // console.log(JSON.stringify(filter))
-    console.log(JSON.stringify(groupFilter))
-    Case.find(filter)
-    .paginate({page: options.page, limit: options.limit})
-    .populate("donations")
-    .populate("group", groupFilter)
-    .exec(function(err, _cases) {
-        if(err) return cb(err)
-        for (var i = 0; i < _cases.length; i++) {
-            _case = _cases[i];
-            _case.donorsCount = _case.donations.length
-            var sum = 0
-            for(var j = 0; j < _case.donations.length; j++) {
-              sum += _case.donations[j].amount
-            }
-            _case.moneyRaised = sum;
-            _case.donations = undefined;
-        }
-        return cb(null, _cases);
-    });
+
+    // get the cases count: used in pagination
+    Case.count(filter).exec(function(err, caseCount) {
+      // then get the case
+      Case.find(filter)
+      .paginate({page: options.page, limit: options.limit})
+      .populate("donations")
+      .populate("group", groupFilter)
+      .exec(function(err, _cases) {
+          if(err) return cb(err)
+          for (var i = 0; i < _cases.length; i++) {
+              _case = _cases[i];
+              _case.donorsCount = _case.donations.length
+              var moneyRaised = 0;
+              var moneyPromised = 0;
+              for(var j = 0; j < _case.donations.length; j++) {
+                if(_case.donations[j].isPromise)
+                  moneyPromised += _case.donations[j].amount
+                else
+                  moneyRaised += _case.donations[j].amount
+              }
+              _case.moneyRaised = moneyRaised;
+              _case.moneyPromised = moneyPromised;
+              _case.donations = undefined;
+          }
+          return cb(null, {cases:_cases, count: caseCount});
+      });
+    })
   },
 
   findOneWithDonatinos: function(caseId, cb) {
@@ -83,11 +91,17 @@ module.exports = {
         if(err) return cb(err)
 
         _case.donorsCount = _donations.length
-        var sum = 0
+        var moneyRaised = 0
+        var moneyPromised = 0;
         for(var i = 0; i < _donations.length; i++) {
-          sum += _donations[i].amount
+          if(_donations[i].isPromise)
+            moneyPromised += _donations[i].amount
+          else
+            moneyRaised += _donations[i].amount
         }
-        _case.moneyRaised = sum;
+        _case.moneyRaised = moneyRaised;
+        _case.moneyPromised = moneyPromised;
+
         return cb(err, _case);
       })
     });

@@ -14,13 +14,14 @@ module.exports = require('waterlock').actions.user({
 
     // filter by groupid
     var groupId = req.query.group;
-    if(groupId) {
+  if(groupId != null) {
       filter = {
         or: [
-          { group: groupId },
           { group: null },
         ]
       }
+      if(groupId > 0)
+        filter.or.push({group: groupId})
     }
 
     Auth.find(filter).then(function(users) {

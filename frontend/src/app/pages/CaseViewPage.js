@@ -23,7 +23,6 @@ import FloatingButton from "../components/FloatingButton";
 import ContentAddIcon from 'material-ui/svg-icons/content/add';
 
 import auth from "../stores/AuthStore";
-import config from "../config";
 
 import AuthorizedComponent from "../components/AuthorizedComponent";
 
@@ -90,8 +89,6 @@ const styles = {
   }
 };
 
-const backendUrl = config.backendUrl();
-
 @observer
 class CaseViewPage extends Component {
 
@@ -136,7 +133,7 @@ class CaseViewPage extends Component {
   render() {
 
     const { id, title, summary, city, section, moneyRaised, moneyRequired,
-        daysRemaining, donorsCount, story, group, category, imageUrl } = store.currentCase
+        daysRemaining, donorsCount, story, group, category, imageFd } = store.currentCase
     const moneyRaisedPer = Math.round( (moneyRaised / moneyRequired) * 100 );
     const isLoading = store.isLoading
 
@@ -150,7 +147,7 @@ class CaseViewPage extends Component {
 
                 <Col xs={12} sm={8}>
                   <div style={colStyle}>
-                    <img style={imgStyle} src={backendUrl + imageUrl}/>
+                    <img style={imgStyle} src={"../images/" + imageFd}/>
                     <br/>
                     <Row>
                     <Col xs={7} sm={5} md={4} lg={3}>

@@ -126,103 +126,40 @@ module.exports = {
 
 	},
 
-//**********************************************************
-//**********************************************************
-//**********************************************************
-
-	// update: function(req, res) {
-	// 	// get the list of new admins and compare it to current admins
-	// 	// give newly admins group id and give them group permissions
-	// 	// set group id to null for removed admins and remove groupaAmin role
-	//
-	// 	// check for admins
-	// 	// checking admins
-	// 	if(req.body.admins) {
-	// 		// get group current admins
-	// 		Group.findOne({id: req.params.id})
-	// 		.populate("admins")
-	// 		.then(function(group) {
-	// 			var currentAdmins  = group.admins.map(function(a) {return a.id});
-	// 			var updatedAdmins = req.body.admins;
-	// 			// get new and removed admins by compareing currentAdmins with admins of request
-	// 			// getting removed admins
-	// 			var removedAdmins = [];
-	// 			for (var i = 0; i < currentAdmins.length; i++) {
-	// 				var currentAdminId = currentAdmins[i];
-	// 				// if admin removed from group
-	// 				if(updatedAdmins.indexOf(currentAdminId) < 0) {
-	// 						removedAdmins.push(currentAdminId)
-	// 				}
-	// 			}
-	// 			// getting the newly added admins
-	// 			var newAdmins = [];
-	// 			for (var i = 0; i < updatedAdmins.length; i++) {
-	// 				var updatedAdminId = updatedAdmins[i];
-	// 				// if admin added to group
-	// 				if(currentAdmins.indexOf(updatedAdminId) < 0){
-	// 					newAdmins.push(updatedAdminId);
-	// 				}
-	// 			}
-	// 			Role.findOne({name: "groupAdmin"})
-	// 			.then(function(role) {
-	// 				// remove role from removed admins
-	// 				for (var i = 0; i < removedAdmins.length; i++) {
-	// 					role.users.remove(removedAdmins[i]);
-	// 				}
-	// 				// adding roles to newly added admins
-	// 				for (var i = 0; i < newAdmins.length; i++) {
-	// 					role.users.add(newAdmins[i]);
-	// 				}
-	// 				role.save().then(function() {
-	// 					// update group
-	// 					Group.update({id: req.params.id}, req.body)
-	// 					.then(function(group) {
-	// 						return res.ok(group);
-	// 					})
-	// 					.catch(function(error) {
-	// 						return(res.badRequest(error.message))
-	// 					})
-	// 					return res.json({group: group, status:{new: newAdmins, removed: removedAdmins}});
-	// 				})
-	// 			})
-	// 		})
-	// 	}
-	// },
-
 	uploadImage: function (req, res) {
-  var uploadDir = require('path').resolve(sails.config.appPath, 'assets/images');
-  req.file('image').upload({
-    // don't allow the total upload size to exceed ~10MB
-    maxBytes: 10000000,
-    //Uploading to a custom folder
-    dirname: uploadDir,
-  },function whenDone(err, uploadedFiles) {
-    if (err) {
-      return res.negotiate(err);
-    }
+  		var uploadDir = require('path').resolve(sails.config.appPath, 'assets/images');
+  		req.file('image').upload({
+		    // don't allow the total upload size to exceed ~10MB
+		    maxBytes: 10000000,
+		    //Uploading to a custom folder
+		    dirname: uploadDir,
+	  	},function whenDone(err, uploadedFiles) {
+	    if (err) {
+	      return res.negotiate(err);
+	    }
 
-    // If no files were uploaded, respond with an error.
-    if (uploadedFiles.length === 0){
-      return res.badRequest('No file was uploaded');
-    }
+	    // If no files were uploaded, respond with an error.
+	    if (uploadedFiles.length === 0){
+	      return res.badRequest('No file was uploaded');
+	    }
 
-    Group.findOne({id: req.params.id})
-    .then(function(group){
-      if(!group) {
-        return res.notFound("group not found");
-      }
+	    Group.findOne({id: req.params.id})
+	    .then(function(group){
+	      if(!group) {
+	        return res.notFound("group not found");
+	      }
 
-      group.imageUrl = require('util').format('/groups/image/%s', req.params.id);
-      group.imageFd = uploadedFiles[0].fd.replace(/^.*[\\\/]/, '');
+	      group.imageUrl = require('util').format('/groups/image/%s', req.params.id);
+	      group.imageFd = uploadedFiles[0].fd.replace(/^.*[\\\/]/, '');
 
-      group.save()
-        .then(function(){
-          return res.ok();
-        }).catch(function(error){
-          return res.negotiate(err);
-        });
-      })
-    });
+	      group.save()
+	        .then(function(){
+	          return res.ok();
+	        }).catch(function(error){
+	          return res.negotiate(err);
+	        });
+	      })
+	    });
   },
 
   image: function (req, res){

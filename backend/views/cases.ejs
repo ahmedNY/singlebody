@@ -1,0 +1,101 @@
+<link rel="stylesheet" type="text/css" href="mpa/css/card.css">
+<div class="container-fluid">
+    <br/>
+    <div class="jumbotron">
+      <h1> <%= ["إنتو الخير","يا ناس الجود","يا اهل الكرم","السلام عليكم","إنتو الجود و الكرم","يا ناس"][Math.floor(Math.random() * 5) ] + "،،،"%> </h1>
+      <p> <%= randomCase.summary %> </p>
+      <p><a class="btn btn-primary btn-lg" href="#" role="button">تبرع الان</a></p>
+    </div>
+    
+
+    <div class="row">
+
+        <% _.each(cases, function (_case) { %>
+            <div class="card-col-layout col-md-4 col-sm-6">
+                <div class="card">
+                    <div class="card-image">
+                        <a href=<%= "/cases/" + _case.id %> >
+                            <img class="img-responsive" src=<%= "/images/" + _case.imageFd %>>
+                        </a>
+                    </div>
+                    <div class="card-content">
+                        <a href=<%= "/cases/" + _case.id %> >
+                            <span class="card-title"><%= _case.title %></span><br/>
+                            <span class="card-subtitle"><%= _case.group.name %></span>
+                        </a>
+                        <p><%= _case.summary %></p>
+                        <br/>
+                        <span class="glyphicon glyphicon-map-marker"></span> &nbsp</i><%= _case.city %> ، <%= _case.section %></p>
+                        <div class="progress" style="height: 7px; margin-bottom:5px; margin-top:5px">
+                            <!-- moneyRaise progress -->
+                            <div class="progress-bar progress-bar-success"
+                                 style="width: <%= moneyRaisedPer = ((_case.moneyRaised / _case.moneyRequired) * 100) %>%">
+                            </div>
+
+                            <div class="progress-bar" role="progressbar" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100"     style="width: <%= (((_case.moneyPromised / _case.moneyRequired) * 100) + moneyRaisedPer) > 100 ? 100 - moneyRaisedPer : ((_case.moneyPromised / _case.moneyRequired) * 100) %>%">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-4 text-center">
+                                <p><b><%= _case.donorsCount %></b><br/> <span class="small">متبرع</span></p>
+                            </div>
+                            <div class="col-xs-4 text-center">
+                                <p style="color:#5cb85c"><b> جـ <%= _case.moneyRaised %> </b><br/> <span class="small"> تم استلامها</span></p>
+                            </div>
+                            <div class="col-xs-4 text-center">
+                                <p style="color:#337ab7"><b> جـ <%= _case.moneyPromised %> </b><br/> <span class="small"> موعودة بالدفع </span> </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <% }) %>
+
+    </div> <!-- row -->
+    <!-- Pagination -->
+    <div class="col-sm-4 col-sm-offset-4 text-center">
+        <nav aria-label="Page navigation">
+          <ul class="pagination">
+
+            <!-- Previous page button -->
+            <%if (currentPageNumber - 1 < 1) { %>
+                <li class="disabled">
+                  <a aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                  </a>
+                </li>
+            <% } else {%>
+                 <li >
+                  <a href=<%= "/cases?page=" + (currentPageNumber - 1)  + "&limit=" + limit %> aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                  </a>
+                </li>
+            <% } %>
+
+            <!-- Page numbers list -->
+            <% for(var i=0; i< pageCount; i++) { %>
+                <li class=<%= i + 1 === Number(currentPageNumber) ? "active" : ""%> >
+                    <a href=<%= "/cases?page=" + (i + 1)  + "&limit=" + limit %>><%= i + 1 %></a>
+                </li>
+            <% } %>
+
+            <!-- Next page buttton -->
+            <%if (Number(currentPageNumber) + 1 > pageCount) { %>
+                <li class="disabled" >
+                  <a aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                  </a>
+                </li>
+            <% } else {%>
+                <li >
+                  <a href=<%= "/cases?page=" + (Number(currentPageNumber) + 1)  + "&limit=" + limit %> aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                  </a>
+                </li>
+            <% } %>
+
+          </ul>
+        </nav>
+    </div>
+
+</div>

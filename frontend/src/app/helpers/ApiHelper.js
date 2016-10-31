@@ -2,18 +2,28 @@ import axios from "axios";
 import auth from "../stores/AuthStore";
 import uiStore from "../stores/UiStore";
 
-import config from "../config";
+const HOSTNAME = null;
+const PORT = 1337;
+const PREFIX = "api"; //"api"
 
 class ApiHelper {
   constructor() {
-    this.url = config.backendUrl();
+    this.backendUrl;
     this.prepUrl = this.prepUrl.bind(this)
     this.get = this.get.bind(this)
     this.post = this.post.bind(this)
   }
 
   prepUrl(route){
-    return this.url + "/" + route
+    if(!this.backendUrl) {
+      let hostName = HOSTNAME || window.location.hostname;
+      let port = PORT || window.location.port;
+      let host = hostName + ":" + port;
+      host = PREFIX ? (host + "/" + PREFIX ): host
+      this.backendUrl = "http://" + host
+    }
+  
+    return this.backendUrl + "/" + route
   }
 
   makeRequestConfig(withJwt=false){
@@ -33,9 +43,9 @@ class ApiHelper {
     }
   }
 
-  get(route, jwt=false) {
+  get(route, jwt=false, version = 0) {
     uiStore.startLoading();
-    return axios.get(this.prepUrl(route), this.makeRequestConfig(jwt))
+    return axios.get(this.prepUrl(route, version), this.makeRequestConfig(jwt))
           .then( response => {
             console.log(response.data)
             uiStore.endLoading()

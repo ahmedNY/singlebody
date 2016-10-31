@@ -156,8 +156,6 @@ class GroupsAddPage extends AuthorizedPage {
                 name="name"
                 floatingLabelText="اسم المجموعة"
                 hintText="أدخل اسم المجموعة"
-                validations={{minLength:5, maxLength:25}}
-                validationError={errorMessages.wordsError}
                 required
               />
             </Col>
