@@ -63,7 +63,7 @@ class GroupsStore {
     this.group.admins = [];
   }
 
-  getMinifiedRegisteredUsersList = (groupId) => {
+  getMinifiedRegisteredUsersList = (groupId = -1) => {
     console.warn("Fetching all users data")
     return ApiHelper.get("users?group=" + groupId, true)
     .then(response => {

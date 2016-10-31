@@ -18,9 +18,6 @@ import { Grid, Row, Col} from 'react-flexbox-grid';
 
 import store from '../stores/CasesStore.js'
 import uiStore from '../stores/UiStore.js'
-import config from "../config";
-
-const backendUrl = config.backendUrl();
 
 const errorMessages = {
     wordsError: "Please only use letters",
@@ -178,7 +175,9 @@ class CaseEditorPage extends AuthorizedPage {
             this.props.router.push("cases/" + data.id)
           });
         }
-        this.props.router.push("cases/" + data.id)
+        else {
+          this.props.router.push("cases/" + data.id)
+        }
 
     })
   }
@@ -210,7 +209,7 @@ class CaseEditorPage extends AuthorizedPage {
     const {paperStyle, switchStyle, submitStyle } = styles;
     const { wordsError, numericError, urlError } =    errorMessages;
     const { id, title, summary, story, category, city, section,
-            moneyRaised, moneyRequired, daysRemaining, imageUrl } = store.formCase || {}
+            moneyRaised, moneyRequired, daysRemaining, imageFd } = store.formCase || {}
 
     const categoriesItems = store.categories.map((c, i) => {
       return (
@@ -242,10 +241,10 @@ class CaseEditorPage extends AuthorizedPage {
           <img style={styles.imgStyle} src={imagePreviewUrl} />
         </div>
       </CardMedia>);
-    } else if (imageUrl) {
+    } else if (imageFd) {
       $imagePreview =
         <div style={styles.imgContainer}>
-          <img style={styles.imgStyle} src={backendUrl + imageUrl} />
+          <img style={styles.imgStyle} src={"../images/" + imageFd} />
         </div>
     }else {
       $imagePreview = <div style={styles.noImgContainer}></div>
@@ -265,7 +264,7 @@ class CaseEditorPage extends AuthorizedPage {
                         <RaisedButton
                         primary={true}
                         containerElement='label'
-                        label={imageUrl || imagePreviewUrl ? "تغيير الصورة" : 'اختر صورة الحالة'}>
+                        label={imageFd || imagePreviewUrl ? "تغيير الصورة" : 'اختر صورة الحالة'}>
                         <input type="file" onChange={this.imageChanged} name="image" style={styles.exampleImageInput}/>
                         </RaisedButton>
                       <br/>
@@ -292,7 +291,7 @@ class CaseEditorPage extends AuthorizedPage {
                       name="summary"
                       value={summary}
                       required
-                      validations={{minLength:50, maxLength:255}}
+                      validations={{minLength:50, maxLength:120}}
                       validationError={wordsError}
                       hintText="اوصف الحالة باختصار"
                       floatingLabelText="وصف مختصر للحالة"

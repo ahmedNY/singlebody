@@ -1,12 +1,13 @@
 var UserService = require("../services/UserService");
 
 module.exports = require('waterlock').waterlocked({
+  // REST api
   pluralize: true,
 
   find: function(req, res) {
     Case.findWithDonatinos({page: req.query.page, limit: req.query.limit, keyWords:req.query.keyWords}, function(err, _cases) {
       if(err) return res.badRequest(err);
-      return res.ok(_cases)
+      return res.ok(_cases.cases)
     })
   },
 
@@ -107,7 +108,53 @@ module.exports = require('waterlock').waterlocked({
       })
       .pipe(res);
   });
+},
+
+// ---------------------------------------------------------------------------------
+//                                  Multi page app actions
+// ---------------------------------------------------------------------------------
+
+showCases : function(req, res) {
+  var limit = req.query.limit || 12
+  Case.findWithDonatinos({page: req.query.page, limit: limit, keyWords:req.query.keyWords}, function(err, _cases) {
+    if(err) return res.badRequest(err);
+    var casesId = _cases.cases.map(function(c) { return c.id });
+    var randomNumber = Math.floor(Math.random() * casesId.length - 1) + 1
+    var randomCase = _cases.cases[randomNumber];
+    console.log("randomCase", randomCase)
+    return res.view("cases", {
+      cases: _cases.cases,
+      limit: limit,
+      pageCount: Math.ceil(_cases.count / limit),
+      randomCase: randomCase,
+      currentPageNumber: req.query.page || 1
+    })
+  })
+},
+
+showCaseDetails: function(req, res) {
+   Case.findOneWithDonatinos(req.params.id, function(err, _case) {
+      if(err) return res.badRequest(err);
+      return res.view("mpa/cases/caseDetails", {
+        _case: _case
+      })
+    })
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 });

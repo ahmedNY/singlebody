@@ -30,7 +30,6 @@ import uiStore from '../stores/UiStore';
 import auth from '../stores/AuthStore';
 import store from '../stores/GroupsStore';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
-import config from "../config";
 import AuthorizedPage from "./AuthorizedPage";
 
 const styles = {
@@ -67,7 +66,6 @@ const styles = {
     },
 }
 
-const backendUrl = config.backendUrl();
 
 const errorMessages = {
     wordsError: "Please only use letters",
@@ -196,12 +194,12 @@ class GroupsEditPage extends AuthorizedPage {
 
   render() {
 
-    let name, about, admin , imageUrl= "";
+    let name, about, admin , imageFd= "";
     if(store.currentGroup){
       name = store.currentGroup.name;
       about = store.currentGroup.about;
       admin = store.currentGroup.admin;
-      imageUrl = store.currentGroup.imageUrl;
+      imageFd = store.currentGroup.imageFd;
     }
 
     let adminName = "";
@@ -225,10 +223,10 @@ class GroupsEditPage extends AuthorizedPage {
           <img style={styles.imgStyle} src={imagePreviewUrl} />
       </CardMedia>);
     } else
-    if (imageUrl) {
+    if (imageFd) {
       $imagePreview = (
       <CardMedia>
-          <img style={styles.imgStyle} src={backendUrl + imageUrl} />
+          <img style={styles.imgStyle} src={"../images/" + imageFd} />
       </CardMedia>);
     }
 
