@@ -18,6 +18,15 @@ module.exports = require('waterlock').waterlocked({
           return res.ok(permissions);
         })
     })
+  },
+
+  loginForm: function(req, res) {
+      if(!req.session.authenticated)
+  	     return res.view('mpa/loginForm', {
+          redirectUrl: req.query.redirectUrl
+         })
+       else
+          return res.redirect('/')
   }
 
 });

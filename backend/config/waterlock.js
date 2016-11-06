@@ -8,7 +8,8 @@
  * http://waterlock.ninja/documentation
  */
 
-var BASE_URL = "http://singlebody.sd";
+// var BASE_URL = "http://singlebody.sd";
+var BASE_URL = "http://localhost:1337";
 
 module.exports.waterlock = {
 
@@ -143,7 +144,7 @@ module.exports.waterlock = {
       // obj - {controller: 'blog', action: 'post'}
       // string - 'custom json response string'
       // default - 'default'
-      success: 'default',
+      success: '/cases',
 
       // This can be any one of the following
       //

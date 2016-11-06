@@ -31,13 +31,7 @@ module.exports.routes = {
   * `assets` directory)                                                      *
   *                                                                          *
   ***************************************************************************/
-  '/': {
-    view: 'homepage'
-  },
-
-  '/donate': {
-    view: 'donationForm'
-  },
+  'GET /': 'HomeController.index',
 
   '/cases': {
     controller: 'CaseController',
@@ -52,6 +46,10 @@ module.exports.routes = {
   '/auth/login-success': {
     view: 'loginSuccess'
   },
+
+  'GET /login': 'AuthController.loginForm',
+
+  'GET /donate': 'DonationController.donateForm',
 
     /***************************************************************************
   *                                                                          *

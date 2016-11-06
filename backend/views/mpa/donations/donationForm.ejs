@@ -1,0 +1,115 @@
+<style type="text/css">
+  .bottom {
+    position: absolute;
+    bottom: 0;
+    margin-right: 0;
+}
+.row-eq-height {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+}
+</style>
+
+
+<div id="donationForm"  class="container col-xs-12 col-sm-offset-3 col-sm-6" style="min-height: 400px">
+
+<h2>تبرع الان</h2>
+<hr>
+
+  <div v-if="formState == 1">
+    <h3>الخطوة الاولى: تحديد المبلغ</h3>
+    <div class="btn-group-vertical btn-block">
+      <radio button :checked.sync="selectedAmount" v-on:click="nextState" value="25">25 جنية</radio>
+      <radio button :checked.sync="selectedAmount" v-on:click="nextState" value="50">50 جنية</radio>
+      <radio button :checked.sync="selectedAmount" v-on:click="nextState" value="100">100 جنية</radio>
+      <radio button :checked.sync="selectedAmount" v-on:click="nextState"  value="0"> قيمة اخري</radio>
+    </div>
+    <br/>
+    <br/>
+    <div class="form-group">
+          <input class="form-control" dir=ltr type="number" v-if="selectedAmount == 0" v-model="otherAmount">
+    </div>
+  </div>
+
+
+
+
+
+  <div v-if="formState == 2">
+    <h3>الخطوة الثانية: طريقة الدفع</h3>
+    <div class="btn-group-vertical btn-block">
+      <radio button :checked.sync="paymentType" value="collector">تسليم للمندوب</radio>
+    </div>
+  </div>
+
+
+
+  <div v-if="formState == 3">
+    <h3>الخطوة الثالثة: بيانات الإتصال</h3>
+    <br/>
+    <form >
+      <div class="form-group">
+        <label>الرجاء إدخال رقم الموبايل حتي يتصل بك المندوب لتنسيق استلام المبلغ</label>
+        <input dir="ltr" type="text" class="form-control" v-model="phoneNumber">
+      </div>
+    </form>
+  </div>
+
+  <div v-if="formState == 4">
+    <h3>الخطوة الاخيرة: تاكيد العملية</h3>
+    المبلغ: {{selectedAmount}}
+    <br>طريقة الدقع: {{paymentType}}
+    <br>تلفون: {{phoneNumber}}
+    <br>الاسم: bla bla bla
+    <br>البريد الإلكتروني: blah blah blah
+  </div>
+
+  <div v-if="formState == 5">
+    <h3>تم بنجاح</h3>
+    تم ارسال بيانات العملية بنجاح.
+    سيقوم المندوب بالإتصال بك
+    شكرا جزيلا و بارك الله فيك 
+  </div>
+
+  <div class="row row-eq-height hidden-xs">
+    <div class="row bottom">
+      <div class="btn-group btn-group-justified" role="group">
+        <a class="btn btn-warning" v-if="formState > 1" v-on:click="prevState">
+          ارجع
+        </a>
+        <a class="btn btn-primary" v-if="formState < 4" v-on:click="nextState">
+          التالي
+        </a>
+        <a class="btn btn-success" v-if="formState == 4" v-on:click="finish">
+          اكمال العملية
+        </a>
+      </div>
+    </div>
+  </div> 
+
+  <!-- Fixed footer -->
+  <div class="footer navbar-fixed-bottom visible-xs-block">
+    <div class="btn-group btn-group-justified" role="group">
+      <a class="btn btn-warning" v-if="formState > 1" v-on:click="prevState">
+        ارجع
+      </a>
+      <a class="btn btn-primary" v-if="formState < 4" v-on:click="nextState">
+        التالي
+      </a>
+      <a class="btn btn-success" v-if="formState == 4" v-on:click="finish">
+          اكمال العملية
+        </a>
+    </div>
+  </div>
+
+  <alert :show.sync="showErrorMessage" placement="top" duration="3000" type="danger" width="200px" dismissable>
+    <span class="icon-info-circled alert-icon-float-left"></span>
+    <!-- <strong>تنبيه!</strong> -->
+    <p>{{errorMessage}}</p>
+  </alert>
+
+</div> <!-- /container -->
+
+<script src="/mpa/js/donationForm.js"></script>

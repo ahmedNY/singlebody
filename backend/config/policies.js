@@ -58,6 +58,7 @@ module.exports.policies = {
 	// }
 
 
+  '*': 'getSessionInfo',
 
   TestController: {
     restricted: ['sessionAuth'],
@@ -79,6 +80,7 @@ module.exports.policies = {
     update: allPloicies,
     create: allPloicies,
     destroy: allPloicies,
+    // donateForm: ['sessionAuth']
   },
 
   AuthController: {

@@ -59,5 +59,15 @@ module.exports = {
 			return res.ok(_donation[0]);
 		})
 	},
+
+
+	// ***************** MPA ******************************
+	donateForm: function(req, res) {
+		if(req.session.authenticated)
+			return res.view("mpa/donations/donationForm");
+		else {
+			return res.redirect('/login?redirectUrl=donate')
+		}
+	}
 	
 };
