@@ -2,4 +2,5 @@
 backend/assets/images/*.*
 
 frontend/build/*
-backend/assets/*
+
+backend/assets/admin/img/*
